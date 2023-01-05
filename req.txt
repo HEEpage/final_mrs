@@ -1,0 +1,4 @@
+nltk==3.8.1
+konlpy==0.6.0
+pandas==1.5.2
+numpy==1.23.5
