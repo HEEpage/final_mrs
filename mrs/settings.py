@@ -42,6 +42,9 @@ INSTALLED_APPS = [
     # app
     'movies',
     'users',
+
+    # Team add
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
