@@ -2,3 +2,6 @@ nltk==3.8.1
 konlpy==0.6.0
 pandas==1.5.2
 numpy==1.23.5
+keybert==0.7.0
+matplotlib==3.6.2
+wordcloud==1.8.2.2
