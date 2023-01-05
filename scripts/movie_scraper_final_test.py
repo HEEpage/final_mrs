@@ -134,8 +134,14 @@ def run() :
 
     # -------------- IMAGE DOWNLOAD TEST --------------------
 
-    # 이미지 저장할 폴더 경로
+    # 스크랩 시작 전(for문 전)에 작성
+
+    # 이미지 저장할 폴더 경로 
     img_folder_path = 'C:/final_project/final_mrs/static/imgs'
+
+    # -------------------------------------------------------
+
+    # img_url 가져오고 나서 작성
 
     # 폴더가 없으면 새로 생성
     if not os.path.isdir(img_folder_path) :

@@ -58,7 +58,7 @@ class MovieWatch(models.Model) :
 # 현재 상영작 테이블
 class MovieBoxOffice(models.Model) :
 
-    id = models.PositiveSmallIntegerField(primary_key=True)
+    no = models.PositiveSmallIntegerField(primary_key=True)
     movie_id = models.ForeignKey(Movie, related_name="mv_boxoffice", on_delete=models.CASCADE, db_column="movie_id")
 
     def __str__(self) :
@@ -69,7 +69,7 @@ class MovieBoxOffice(models.Model) :
 # 개봉 예정작 테이블
 class MovieUpcoming(models.Model) :
 
-    id = models.PositiveSmallIntegerField(primary_key=True)
+    no = models.PositiveSmallIntegerField(primary_key=True)
     movie_id = models.ForeignKey(Movie, related_name="mv_upcoming", on_delete=models.CASCADE, db_column="movie_id")
 
     def __str__(self) :
