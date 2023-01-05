@@ -70,8 +70,8 @@ class MovieBoxOffice(models.Model) :
 class MovieUpcoming(models.Model) :
 
     id = models.PositiveSmallIntegerField(primary_key=True)
-    movie = models.ForeignKey(Movie, related_name="mv_boxoffice", on_delete=models.CASCADE)
+    movie = models.ForeignKey(Movie, related_name="mv_upcoming", on_delete=models.CASCADE)
 
     def __str__(self) :
-        return f'{self.pk} -- {self.movie_id}'
+        return f'{self.pk} -- {self.movie}'
 
