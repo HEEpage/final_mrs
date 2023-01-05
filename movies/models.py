@@ -3,7 +3,7 @@ from django.db import models
 # 영화 정보 테이블
 class Movie(models.Model) :
     
-    movie_id = models.IntegerField(primary_key=True) # 영화 고유 ID
+    id = models.IntegerField(primary_key=True) # 영화 고유 ID
 
     title = models.CharField(max_length=100) # 제목
     poster = models.CharField(max_length=100, blank=True) # 포스터 이미지 url
@@ -35,7 +35,7 @@ class Movie(models.Model) :
 # 영화 서비스 정보 테이블
 class MovieWatch(models.Model) :
     
-    movie = models.ForeignKey(Movie, related_name='mv_watch', on_delete=models.CASCADE) # 영화 고유 ID
+    movie_id = models.ForeignKey(Movie, related_name='mv_watch', on_delete=models.CASCADE, db_column="movie_id") # 영화 고유 ID
     
     cgv = models.BooleanField(default=0) # CGV 상영 여부
     lotte = models.BooleanField(default=0) # 롯데시네마 상영 여부
@@ -59,10 +59,10 @@ class MovieWatch(models.Model) :
 class MovieBoxOffice(models.Model) :
 
     id = models.PositiveSmallIntegerField(primary_key=True)
-    movie = models.ForeignKey(Movie, related_name="mv_boxoffice", on_delete=models.CASCADE)
+    movie_id = models.ForeignKey(Movie, related_name="mv_boxoffice", on_delete=models.CASCADE, db_column="movie_id")
 
     def __str__(self) :
-        return f'{self.pk} -- {self.movie}'
+        return f'{self.pk} -- {self.movie_id}'
 
 
 
@@ -70,8 +70,8 @@ class MovieBoxOffice(models.Model) :
 class MovieUpcoming(models.Model) :
 
     id = models.PositiveSmallIntegerField(primary_key=True)
-    movie = models.ForeignKey(Movie, related_name="mv_upcoming", on_delete=models.CASCADE)
+    movie_id = models.ForeignKey(Movie, related_name="mv_upcoming", on_delete=models.CASCADE, db_column="movie_id")
 
     def __str__(self) :
-        return f'{self.pk} -- {self.movie}'
+        return f'{self.pk} -- {self.movie_id}'
 
