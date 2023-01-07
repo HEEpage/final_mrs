@@ -6,7 +6,7 @@ class Movie(models.Model) :
     id = models.IntegerField(primary_key=True) # 영화 고유 ID
 
     title = models.CharField(max_length=100) # 제목
-    poster = models.CharField(max_length=100, blank=True) # 포스터 이미지 url
+    poster = models.CharField(max_length=200, blank=True) # 포스터 이미지 url
 
     director = models.CharField(max_length=50, blank=True) # 감독
     cast = models.CharField(max_length=200, blank=True) # 출연진
@@ -14,7 +14,7 @@ class Movie(models.Model) :
     genre = models.CharField(max_length=50, blank=True) # 장르
     nation = models.CharField(max_length=50, blank=True) # 제작국가
     running_time = models.IntegerField(null=True, blank=True) # 상영시간
-    release_date = models.DateField(null=True, blank=True) # 개봉일
+    release_date = models.CharField(max_length=10, blank=True) # 개봉일
     ratings = models.CharField(max_length=20, blank=True) # 관람 등급
 
     synopsis = models.TextField(blank=True) # 줄거리
@@ -58,8 +58,8 @@ class MovieWatch(models.Model) :
 # 현재 상영작 테이블
 class MovieBoxOffice(models.Model) :
 
-    no = models.PositiveSmallIntegerField(primary_key=True)
-    movie_id = models.ForeignKey(Movie, related_name="mv_boxoffice", on_delete=models.CASCADE, db_column="movie_id")
+    no = models.PositiveSmallIntegerField(primary_key=True) # 번호
+    movie_id = models.ForeignKey(Movie, related_name="mv_boxoffice", on_delete=models.CASCADE, db_column="movie_id") # 영화 고유 ID
 
     def __str__(self) :
         return f'{self.pk} -- {self.movie_id}'
@@ -69,9 +69,24 @@ class MovieBoxOffice(models.Model) :
 # 개봉 예정작 테이블
 class MovieUpcoming(models.Model) :
 
-    no = models.PositiveSmallIntegerField(primary_key=True)
-    movie_id = models.ForeignKey(Movie, related_name="mv_upcoming", on_delete=models.CASCADE, db_column="movie_id")
+    no = models.PositiveSmallIntegerField(primary_key=True) # 번호
+    movie_id = models.ForeignKey(Movie, related_name="mv_upcoming", on_delete=models.CASCADE, db_column="movie_id") # 영화 고유 ID
 
     def __str__(self) :
         return f'{self.pk} -- {self.movie_id}'
+
+
+
+# 리뷰 더미 테이블
+class MovieReviewDummy(models.Model) :
+
+    no = models.PositiveSmallIntegerField(primary_key=True) # 번호
+    movie_id = models.ForeignKey(Movie, related_name="mv_review_dummy", on_delete=models.CASCADE, db_column="movie_id") # 영화 고유 ID
+    
+    grade = models.FloatField() # 평점
+    review = models.CharField(max_length=500, blank=True) # 리뷰
+    c_date = models.DateTimeField() # 작성일
+
+    def __str__(self) :
+        return f'{self.pk} -- {self.movie_id} -- {self.grade} -- {self.c_date}'
 
