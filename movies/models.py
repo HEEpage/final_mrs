@@ -28,7 +28,7 @@ class Movie(models.Model) :
     cnt_click = models.PositiveBigIntegerField(default=0) # 클릭 수
 
     def __str__(self) :
-        return f'{self.movie_id} - {self.title}'
+        return f'{self.id} - {self.title}'
 
 
 
