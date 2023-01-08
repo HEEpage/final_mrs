@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<div>
+    <div class="row">
+        <div id="video_list_search" class="col-md-12">
+        {% if search_list %}
+            {% for search in search_list %}
+            <h2><a href="">{{ search.title }}</a></h2>
+            {{ search.director }}
+            <p>{{ search.cast }}</p>
+            {% endfor %}
+        {% elif search_term %}
+            <b><i>Search Word({{ search_term }}) Not Found</i></b>
+        {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<!-- <div>
+    {% if movie_list %}
+    <ul>
+        {% for movie in movie_list %}
+        <li><a href="/movies/{{ movie.id }}/">{{ movie.title }}</a></li>
+        {% endfor %}
+    </ul>
+    {% else %}
+        <p>no movies</p>
+    {% endif %}
+</div> -->
+
+<!-- {% if object_list %}
+        {% for mv in object_list %}
+        <h2><a href=''>{{ mv.title }}</a></h2>
+        {{ mv.director }}
+        <p>{{ mv.cast }}</p>
+        {% endfor %}
+{% elif search_term %}
+        <b><i>Search Word({{ search_term }}) Not Found</i></b>
+{% endif %} -->
