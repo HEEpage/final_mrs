@@ -53,7 +53,7 @@ def idParser(response=None):
 
 
 # 영화 정보 parser
-def infoParser ( response=None ):
+def info_parser ( response=None ):
     try:
 
         # 영화 정보 soup
@@ -63,12 +63,12 @@ def infoParser ( response=None ):
         info_spec_title = info_soup.select('dl.info_spec > dt')
         info_spec_value = info_soup.select('dl.info_spec > dd')
 
-        director = ""
+        director = None
         r_time = None
         genre = "미분류"
         actors = "정보없음"
-        ratings = ""
-        date = ""
+        ratings = None
+        date = None
 
         for idx, spec in enumerate(info_spec_title):
             
@@ -120,16 +120,16 @@ def infoParser ( response=None ):
             By.CSS_SELECTOR,
             "#movieEndTabMenu > li:nth-child(1) > a"
         ).click()
-        response.implicitly_wait(3)
+        response.implicitly_wait(2)
 
-        story, s_keyword = storyParser(response)
+        story, s_keyword = story_parser(response)
 
         # review
         iframe = info_soup.select_one("#pointAfterListIframe")['src']
         address = "https://movie.naver.com" + iframe
         response.get(address)
 
-        grade, viewer, reviews = reviewParser(address, response)
+        grade, viewer, reviews = review_parser(address, response)
 
         movie_info = {
             "title" : title,
@@ -151,16 +151,18 @@ def infoParser ( response=None ):
             "keyword" : s_keyword,
         }
 
-        return movie_info, reviews
+        movie_review = {
+            "reviews" : reviews,
+        }
+        return movie_info, movie_review
     
     except Exception as e:
         return print(traceback.format_exc())
 
 
 
-
 # 영화 시놉시스 parser
-def storyParser(response=None):
+def story_parser(response=None):
 
     story_soup = BeautifulSoup(response.page_source, 'html.parser')
     check = story_soup.select_one("div.story_area")
@@ -183,16 +185,16 @@ def storyParser(response=None):
     return story , story_keyword
 
 # 영화 리뷰 parser
-def reviewParser(address, response=None):
+def review_parser(address, response=None):
     
     frame_soup = BeautifulSoup(response.page_source, 'html.parser')
     reviews = []
     total_score = 0
 
     if frame_soup.select_one("div.no_score_info") is not None:
-        avg_grade = 0
+        grade = 0
         viewer = 0
-        return avg_grade, viewer, reviews
+        return grade, viewer, reviews
         
     else:
         # 만약 리뷰어 수가 만명이 넘는다면 20 페이지 가져오고
@@ -213,8 +215,8 @@ def reviewParser(address, response=None):
 
                 for idx, line in enumerate(lines):
                     # 평점
-                    grade = float(line.select_one("div.star_score > em").get_text(strip=True))
-                    total_score += grade
+                    score = float(line.select_one("div.star_score > em").get_text(strip=True))
+                    total_score += score
 
                     # 리뷰 글
                     ment = f"#_filtered_ment_{idx}"
@@ -222,14 +224,14 @@ def reviewParser(address, response=None):
                     unfold_ment = f"#_unfold_ment{idx} > a"
 
                     if line.select_one(unfold_ment) is None:
-                        review = line.select_one(ment).get_text(strip=True)
+                        text = line.select_one(ment).get_text(strip=True)
                     else:
-                        review = line.select_one(unfold_ment)['data-src']
+                        text = line.select_one(unfold_ment)['data-src']
 
                     # 리뷰 등록 일자
-                    c_date = line.select_one("div.score_reple > dl > dt > em:nth-child(2)").get_text(strip=True).replace(".","-")
+                    cdate = line.select_one("div.score_reple > dl > dt > em:nth-child(2)").get_text(strip=True)
 
-                    reviews.append([grade, review, c_date])
+                    reviews.append([score, text, cdate])
                     
 
         elif cnt > 10000 :
@@ -241,34 +243,34 @@ def reviewParser(address, response=None):
 
                 for idx, line in enumerate(lines):
                     # 평점
-                    grade = float(line.select_one("div.star_score > em").get_text(strip=True))
-                    total_score += grade
+                    score = float(line.select_one("div.star_score > em").get_text(strip=True))
+                    total_score += score
                     # 리뷰 글
                     ment = f"#_filtered_ment_{idx}"
                     # ment가 길다면...
                     unfold_ment = f"#_unfold_ment{idx} > a"
 
                     if line.select_one(unfold_ment) is None:
-                        review = line.select_one(ment).get_text(strip=True)
+                        text = line.select_one(ment).get_text(strip=True)
                     else:
-                        review = line.select_one(unfold_ment)['data-src']
+                        text = line.select_one(unfold_ment)['data-src']
 
                     # 리뷰 등록 일자
-                    c_date = line.select_one("div.score_reple > dl > dt > em:nth-child(2)").get_text(strip=True).replace(".","-")
+                    cdate = line.select_one("div.score_reple > dl > dt > em:nth-child(2)").get_text(strip=True)
                     
-                    reviews.append([grade, review, c_date])
+                    reviews.append([score, text, cdate])
 
         viewer = len(reviews)
 
         if viewer == 0:
-            avg_grade = 0
+            grade = 0
         else:
-            avg_grade = round(total_score / viewer, 1)
+            grade = round(total_score / viewer, 1)
 
-        return avg_grade, viewer, reviews
+        return grade, viewer, reviews
 
 
-def ottParser(m_title, m_director, response=None):
+def ott_parser(m_title, m_director, response=None):
     
     netflix = 0
     watcha = 0
@@ -334,7 +336,7 @@ def ottParser(m_title, m_director, response=None):
         "wavve_url" : wavve_url,
     }
 
-def theaterParser(response=None):
+def theater_parser(response=None):
 
     theater_soup = BeautifulSoup(response.page_source, 'html.parser')
 
@@ -355,7 +357,7 @@ def theaterParser(response=None):
     }
 
 
-def top10Parser(category, response=None):
+def top10_parser(category, response=None):
     id_list = list()
     if category == "upcoming":
         time.sleep(8)
