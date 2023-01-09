@@ -20,14 +20,14 @@ def movieSearchList(request):
     return render(request, "movie_list.html", context)
 
 def movieBoxOfficeList(request):
-    box_list = MovieBoxOffice.objects.all()
+    box_list = MovieBoxOffice.objects.all().order_by("-release_date")[:3]
     context = {
         "box_list": box_list
     }
     return render(request, "movie_list.html", context)
 
 def movieUpcomingList(request):
-    up_list = MovieUpcoming.objects.all()
+    up_list = MovieUpcoming.objects.all().order_by("-release_date")[:3]
     context = {
         "up_list": up_list
     }

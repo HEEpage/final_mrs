@@ -9,18 +9,8 @@
             {{ search.director }}
             <p>{{ search.cast }}</p>
             {% endfor %}
-        {% endif %}
-        {% if box_list %}
-            {% for box in box_list %}
-            <h2><a href="">{{ box.no }}</a></h2>
-            <p>{{ box.movie_id }}</p>
-            {% endfor %}
-        {% endif %}
-        {% if up_list %}
-            {% for up in up_list %}
-            <h2><a href="">{{ up.no }}</a></h2>
-            <p>{{ up.movie_id }}</p>
-            {% endfor %}
+        {% elif search_term %}
+            <b><i>Search Word({{ search_term }}) Not Found</i></b>
         {% endif %}
         </div>
     </div>
