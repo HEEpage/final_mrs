@@ -44,7 +44,7 @@ class User(AbstractUser) :
 # 사용자-영화 관람 기록 테이블
 class UserMovieLog(models.Model) :
     
-    no = models.BigIntegerField(primary_key=True, auto_created=True) # 번호
+    no = models.BigAutoField(primary_key=True) # 번호
 
     user_email = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -58,13 +58,13 @@ class UserMovieLog(models.Model) :
     c_date = models.DateTimeField(auto_now_add=True) # 기록 작성일
 
     def __str__(self) :
-        return "__all__"
+        return f"{self.pk} -- {self.user_email} -- {self.movie_id} -- {self.grade}"
 
 
 # 사용자 페이지 사용 기록 테이블 (영화 상세페이지 클릭하면 자동 기록)
 class UserLogData(models.Model) :
     
-    no = models.BigIntegerField(primary_key=True, auto_created=True) # 번호
+    no = models.BigAutoField(primary_key=True) # 번호
 
     user_email = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -76,5 +76,21 @@ class UserLogData(models.Model) :
     log_date = models.DateTimeField(auto_now_add=True) # 기록 작성일
 
     def __str__(self) :
-        return "__all__"
+        return f"{self.pk} -- {self.user_email} -- {self.movie_id} -- {self.log_date}"
+
+
+# 사용자 위시리스트
+class UserMovieWish(models.Model) :
+
+    no = models.BigAutoField(primary_key=True) # 번호
+
+    user_email = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete = models.CASCADE,
+        db_column = "user_email",
+    ) # 사용자 E-mail
+    movie_id = models.ForeignKey(Movie, on_delete = models.CASCADE, db_column = "movie_id") # 영화 고유 ID
+
+    def __str__(self) :
+        return f"{self.pk} -- {self.user_email} -- {self.movie_id}"
 

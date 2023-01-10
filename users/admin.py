@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, UserMovieLog, UserLogData
+from .models import User, UserMovieLog, UserLogData, UserMovieWish
 
 # Register your models here.
 
@@ -11,3 +11,4 @@ class UserAdmin(admin.ModelAdmin) :
 
 admin.site.register(UserMovieLog)
 admin.site.register(UserLogData)
+admin.site.register(UserMovieWish)
