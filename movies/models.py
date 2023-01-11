@@ -35,13 +35,12 @@ class Movie(models.Model) :
 # 영화 서비스 정보 테이블
 class MovieWatch(models.Model) :
     
-    movie_id = models.ForeignKey(
+    movie_id = models.OneToOneField(
         Movie, 
         related_name='mv_watch', 
         on_delete=models.CASCADE, 
         db_column="movie_id",
-        primary_key=True,
-        unique=True) # 영화 고유 ID
+        primary_key=True) # 영화 고유 ID
     
     cgv = models.BooleanField(default=0) # CGV 상영 여부
     lotte = models.BooleanField(default=0) # 롯데시네마 상영 여부
