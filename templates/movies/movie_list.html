@@ -1,0 +1,28 @@
+{% extends "movies/base.html" %}
+{% block content %}
+    <div>
+        <div class="row">
+            <div id="video_list_search" class="col-md-12">
+            {% if search_list %}
+                {% for search in search_list %}
+                <h2><a href="">{{ search.title }}</a></h2>
+                {{ search.director }}
+                <p>{{ search.cast }}</p>
+                {% endfor %}
+            {% endif %}
+            {% if box_list.exists %}
+                {% for box in box_list %}
+                <h2><a href="">{{ box.no }}</a></h2>
+                <p>{{ box.movie_id }}</p>
+                {% endfor %}
+            {% endif %}
+            {% if up_list.exists %}
+                {% for up in up_list %}
+                <h2><a href="">{{ up.no }}</a></h2>
+                <p>{{ up.movie_id }}</p>
+                {% endfor %}
+            {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
