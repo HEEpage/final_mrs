@@ -1,6 +1,7 @@
 from scripts.crawler import SeleniumRequest
 from scripts.crawler.parser import infoParser, topidParser
 from movies.models import Movie, MovieReviewDummy
+from tqdm import tqdm
 
 def run():
     request = SeleniumRequest()
@@ -33,11 +34,18 @@ def run():
 
 
         # 2. movie info 가져오기
-        for movie_id in ids:
-            print(">>>>>>>>>> " + movie_id + " 정보 가져오는 중 <<<<<<<<<<")
+        for movie_id in tqdm(ids, 
+                        total = len(ids), ## 전체 진행수
+                        desc = f'{target} status 변경', ## 진행률 앞쪽 출력 문장
+                        ncols = 70, ## 진행률 출력 폭 조절
+                        ascii = ' =', ## 바 모양, 첫 번째 문자는 공백이어야 작동
+                        leave = True, ## True 반복문 완료시 진행률 출력 남김. False 남기지 않음.
+                        ):
+                        
+            # print(">>>>>>>>>> " + movie_id + " 정보 가져오는 중 <<<<<<<<<<")
 
-            if movie_id in update_lst:
-                update_lst.remove(movie_id)
+            if int(movie_id) in update_lst:
+                update_lst.remove(int(movie_id))
                 continue
 
             url = f"https://movie.naver.com/movie/bi/mi/point.naver?code={movie_id}"
@@ -54,7 +62,7 @@ def run():
 
                         no = MovieReviewDummy.objects.last().no + 1
                         for review in movie_review:
-                            MovieReviewDummy(no=no, movie_id=Movie.objects.get(id=movie_id), grade=review[0], review=review[1], c_date=review[2]).save()
+                            MovieReviewDummy(no=no, movie_id=Movie.objects.get(id=movie_id), **review).save()
                             no += 1
                     else:
                         # DB에 해당하는 id값이 있으면 status=1로 변경
@@ -72,7 +80,7 @@ def run():
 
                         no = MovieReviewDummy.objects.last().no + 1
                         for review in movie_review:
-                            MovieReviewDummy(no=no, movie_id=Movie.objects.get(id=movie_id), grade=review[0], review=review[1], c_date=review[2]).save()
+                            MovieReviewDummy(no=no, movie_id=Movie.objects.get(id=movie_id), **review).save()
                             no += 1
                     else:
                         # DB에 해당하는 id값이 있으면 status=2로 변경
