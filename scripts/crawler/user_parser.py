@@ -6,6 +6,8 @@ import math
 import time
 import traceback
 
+from movies.models import Movie
+from users.models import UserMovieLog, User
 
 def userParser(response=None):
     userList = list()
@@ -69,7 +71,10 @@ def userParser(response=None):
                     title = info.select_one("div.css-niy0za").text
                     grade = info.select_one("div.css-m9i0qw").text.split("★")[-1].strip()
 
-                    print(name.split(" ")[0], title, grade)
+                    # 저장된 영화에 있는지 확인하고 user log 저장
+                    if Movie.objects.filter(title__contains = title).count()==1:
+                        print(Movie.objects.get(title__contains=title).id)
+                        print(name.split(" ")[0], title, grade*2)
 
                 break
                 

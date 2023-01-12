@@ -107,6 +107,9 @@ def infoParser ( response=None ):
                 if "국내" in info_spec_value[idx].select_one('p').text.strip():
                     ratings = info_spec_value[idx].select_one('p > a').text.strip()
 
+        # 장르가 멜로/로맨스 or 에로 이며 관람등급이 청소년 관람불가인 영화는 가져오지 않는다.
+        if ("멜로/로맨스" in genre or "에로" in genre) and "청소년 관람불가" in ratings:
+            return
 
         # title, poster-----------------------------------------------------------------
         title = info_soup.select_one('div.mv_info_area > div.mv_info > h3 > a').text.strip()
@@ -155,7 +158,6 @@ def infoParser ( response=None ):
     
     except Exception as e:
         return print(traceback.format_exc())
-
 
 
 
@@ -220,18 +222,21 @@ def reviewParser(address, response=None):
 
                     # 리뷰 글
                     ment = f"#_filtered_ment_{idx}"
-                    # ment가 길다면...
-                    unfold_ment = f"#_unfold_ment{idx} > a"
 
-                    if line.select_one(unfold_ment) is None:
-                        review = line.select_one(ment).get_text(strip=True)
-                    else:
-                        review = line.select_one(unfold_ment)['data-src']
+                    review = line.select_one(ment).get_text(strip=True)
+
+                    # ment가 길다면...
+                    # unfold_ment = f"#_unfold_ment{idx} > a"
+                    
+                    # if line.select_one(unfold_ment) is None:
+                        # review = line.select_one(ment).get_text(strip=True)
+                    # else:
+                    #     review = line.select_one(unfold_ment)['data-src']
 
                     # 리뷰 등록 일자
                     c_date = line.select_one("div.score_reple > dl > dt > em:nth-child(2)").get_text(strip=True).replace(".","-")
 
-                    reviews.append([grade, review, c_date])
+                    reviews.append({"grade" : grade, "review": review, "c_date": c_date})
                     
 
         elif cnt > 10000 :
@@ -245,20 +250,25 @@ def reviewParser(address, response=None):
                     # 평점
                     grade = float(line.select_one("div.star_score > em").get_text(strip=True))
                     total_score += grade
+
                     # 리뷰 글
                     ment = f"#_filtered_ment_{idx}"
-                    # ment가 길다면...
-                    unfold_ment = f"#_unfold_ment{idx} > a"
 
-                    if line.select_one(unfold_ment) is None:
-                        review = line.select_one(ment).get_text(strip=True)
-                    else:
-                        review = line.select_one(unfold_ment)['data-src']
+                    review = line.select_one(ment).get_text(strip=True)
+
+                    # ment가 길다면...
+                    # unfold_ment = f"#_unfold_ment{idx} > a"
+                    
+                    # if line.select_one(unfold_ment) is None:
+                        # review = line.select_one(ment).get_text(strip=True)
+                    # else:
+                    #     review = line.select_one(unfold_ment)['data-src']
+
 
                     # 리뷰 등록 일자
                     c_date = line.select_one("div.score_reple > dl > dt > em:nth-child(2)").get_text(strip=True).replace(".","-")
                     
-                    reviews.append([grade, review, c_date])
+                    reviews.append({"grade" : grade, "review": review, "c_date": c_date})
 
         viewer = len(reviews)
 
