@@ -8,5 +8,5 @@ from .forms import CreateUserForm
 # 회원가입 view
 class UserCreateView(CreateView) :
     form_class = CreateUserForm
-    template_name = 'users/register.html'
+    template_name = 'users/signup.html'
     success_url = reverse_lazy('home')
