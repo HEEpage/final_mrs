@@ -85,7 +85,7 @@ class MovieUpcoming(models.Model) :
 # 리뷰 더미 테이블
 class MovieReviewDummy(models.Model) :
 
-    no = models.PositiveSmallIntegerField(primary_key=True) # 번호
+    no = models.BigAutoField(primary_key=True) # 번호
     movie_id = models.ForeignKey(Movie, related_name="mv_review_dummy", on_delete=models.CASCADE, db_column="movie_id") # 영화 고유 ID
     
     grade = models.FloatField() # 평점
@@ -95,3 +95,12 @@ class MovieReviewDummy(models.Model) :
     def __str__(self) :
         return f'{self.pk} -- {self.movie_id} -- {self.grade} -- {self.c_date}'
 
+
+# 영화 장르 테이블 (관계성 없음)
+class MovieGenre(models.Model) :
+
+    no = models.SmallAutoField(primary_key=True)
+    type = models.CharField(max_length=10)
+
+    def __str__(self) :
+        return f'{self.pk} -- {self.type}'
