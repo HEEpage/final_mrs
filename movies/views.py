@@ -1,20 +1,32 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from movies.models import Movie, MovieBoxOffice, MovieUpcoming, MovieWatch
 from django.db.models import Q
 from django.views.generic import DetailView
+from movies.genre_type import GENRE_TYPE
 
 # Create your views here.
-def movieGenreList(request):
-    genre_num = request.GET.get('genre')
-    print(genre_num)
+def movieGenreList(request, genre_num): # sort_num=None
+    genre_num = int(request.POST.get('genre_num')) - 1
+    # sort_num = request.POST.get('sort_num')
+    print('genre_num : ', genre_num - 1)
+    # print('sort_num : ', sort_num)
 
-    GENRE_TYPE = ["드라마", "판타지", "서부", "공포", "멜로/로맨스", "모험", "스릴러", "느와르", "컬트", "다큐멘터리", "코미디", "가족", "미스터리", "전쟁", "애니메이션", "범죄", "뮤지컬", "SF", "액션", "무협", "에로", "서스펜스", "서사", "블랙코미디", "실험", "공연실황"]
     gen_list = Movie.objects.filter(genre__contains=GENRE_TYPE[genre_num])
 
+    # if sort_num == 1: # 장르 필터링 + 클릭수가 많은 순
+    #     gen_list = Movie.objects.filter(genre__contains=GENRE_TYPE[genre_num]).order_by(-cnt_click)
+    # elif sort_num == 2: # 장르 필터링 + 최신순
+    #     gen_list = Movie.objects.filter(genre__contains=GENRE_TYPE[genre_num]).order_by(-release_date)
+    # elif sort_num == None: # 장르 필터링
+    #     gen_list = Movie.objects.filter(genre__contains=GENRE_TYPE[genre_num])
+
     context = {
+        'genre_type': GENRE_TYPE,
         'genre_num': genre_num,
+        # 'sort_num': sort_num,
         'gen_list': gen_list
     }
+    # redirect('genre/<int:genre_num>')
     return render(request, 'movies/movie_list.html', context)
 
 def movieSearchList(request):
@@ -25,7 +37,8 @@ def movieSearchList(request):
         search_list = search_list.filter(Q(title__icontains=search_key) | Q(director__icontains=search_key) | Q(cast__icontains=search_key)).distinct()
 
     context = {
-        "search_list" : search_list
+        "search_list" : search_list,
+        "genre_type": GENRE_TYPE
     }
     return render(request, "movies/movie_list.html", context)
 
