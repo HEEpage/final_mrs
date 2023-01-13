@@ -130,5 +130,18 @@ STATICFILES_DIRS = (BASE_DIR / 'static',)
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Team add
+
+# -------------- TEAM ADD ------------------
+
+# Custom User Model 사용
 AUTH_USER_MODEL = 'users.User'
+
+# 회원가입 또는 비밀번호 찾기를 할 때 이메일 인증 받기
+# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+# 로그인 성공후 이동하는 URL
+LOGIN_REDIRECT_URL = '/'
+
+# 로그아웃 후 이동하는 URL
+LOGOUT_REDIRECT_URL = '/'
+
