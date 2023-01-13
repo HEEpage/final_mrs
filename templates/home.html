@@ -7,6 +7,15 @@
     <title>Document</title>
 </head>
 <body>
-    HOME TEST
+    <h1>HOME TEST</h1>
+    
+    {% if user.is_authenticated %}
+        <p> {{ user.username }} </p>
+    {% endif %}
+
+    <p> <a href="{% url 'users:signup' %}">회원가입</a> </p>
+    <p> <a href="{% url 'users:signin' %}">로그인</a> </p>
+    <p> <a href="{% url 'users:signout' %}">로그아웃</a> </p>
+
 </body>
 </html>

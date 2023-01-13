@@ -26,3 +26,10 @@ class CreateUserForm(UserCreationForm) :
         model = User
         fields = ("email", "username", "password1", "password2", "gender", "birth", "preference_genre")
 
+
+# 로그인 Form
+class LoginUserForm(forms.ModelForm) :
+    class Meta :
+        model = User
+        fields = ["email", "password"]
+
