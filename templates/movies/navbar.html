@@ -1,38 +1,6 @@
 <nav class="navbar navbar-expand-lg bg-light">
     <div class="container-fluid">
         <a class="navbar-brand" href="{% url 'home' %}">MSR</a>
-        <div>
-            <form method="get" action="" class="form" style="margin-left: 7%; margin-top: 5%;">
-                <select name="genre_num" id="genre_num">
-                    <option value="0">드라마</option>
-                    <option value="1">판타지</option>
-                    <option value="2">서부</option>
-                    <option value="3">공포</option>
-                    <option value="4">멜로/로맨스</option>
-                    <option value="5">모험</option>
-                    <option value="6">스릴러</option>
-                    <option value="7">느와르</option>
-                    <option value="8">컬트</option>
-                    <option value="9">다큐멘터리</option>
-                    <option value="10">코미디</option>
-                    <option value="11">가족</option>
-                    <option value="12">미스터리</option>
-                    <option value="13">전쟁</option>
-                    <option value="14">애니메이션</option>
-                    <option value="15">범죄</option>
-                    <option value="16">뮤지컬</option>
-                    <option value="17">SF</option>
-                    <option value="18">액션</option>
-                    <option value="19">무협</option>
-                    <option value="20">에로</option>
-                    <option value="21">서스펜스</option>
-                    <option value="22">서사</option>
-                    <option value="23">블랙코미디</option>
-                    <option value="24">실험</option>
-                    <option value="25">공연실황</option>
-                </select>
-            </form>
-        </div>
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
             <ul class="navbar-nav">
                 <li class="nav-item">
@@ -41,17 +9,4 @@
             </ul>
         </div>
     </div>
-    <form action="." method="get">
-        <div class="row" style="margin-bottom:15px;">
-            <div class="col-lg-5">
-                <div class="input-group">
-                    <input type="text" class="form-control" name="search_key" value="{{ search_key }}"
-                        placeholder="">
-                    <span class="input-group-btn">
-                        <input class="btn btn-default" type="submit" value="Search">
-                    </span>
-                </div><!-- /input-group -->
-            </div><!-- /.col-lg-6 -->
-        </div><!-- /.row -->
-    </form>
 </nav>

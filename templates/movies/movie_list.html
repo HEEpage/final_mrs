@@ -1,12 +1,43 @@
 {% extends "movies/base.html" %}
 {% block content %}
     <div>
+        <form method="post" id="genre_show" action="" class="form" style="margin-left: 7%; margin-top: 5%;">
+            {% csrf_token %}
+            <select name="genre_num" id="genre_num">
+                {% for gt in genre_type %}
+                    <option value="{{ forloop.counter }}">{{ gt }}</option>
+                {% endfor %}
+            </select>
+            <!-- <a href="" name="click" value="1" onclick="sort_click()">인기순</a>
+            <a href="" name="date" value="2" onclick="sort_click()">최신순</a> -->
+            <!-- <select name="sort_num" id="sort_num">
+                <option value="None">정렬</option>
+                <option value="1">인기순</option>
+                <option value="2">최신순</option>
+            </select> -->
+        </form>
+        <form action="." method="get">
+            <div class="row" style="margin-bottom:15px;">
+                <div class="col-lg-5">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="search_key" value="{{ search_key }}"
+                            placeholder="">
+                        <span class="input-group-btn">
+                            <input class="btn btn-default" type="submit" value="Search">
+                        </span>
+                    </div><!-- /input-group -->
+                </div><!-- /.col-lg-6 -->
+            </div><!-- /.row -->
+        </form>
+    </div>
+    <div>
         <div class="row">
             <div id="video_list_search" class="col-md-12">
             {% if search_list %}
                 {% for search in search_list %}
                 <h2><a href="">{{ search.title }}</a></h2>
-                {{ search.director }}
+                <p>{{ search.director }}</p>
+                <p>{{ gen.genre }}</p>
                 <p>{{ search.cast }}</p>
                 {% endfor %}
             {% endif %}
@@ -22,7 +53,36 @@
                 <p>{{ up.movie_id }}</p>
                 {% endfor %}
             {% endif %}
+            {% if gen_list.exists %}
+                {% for gen in gen_list %}
+                <h2><a href="">{{ gen.title }}</a></h2>
+                <p>{{ gen.director }}</p>
+                <p>{{ gen.genre }}</p>
+                <p>{{ gen.cast }}</p>
+                {% endfor %}
+            {% endif %}
             </div>
         </div>
     </div>
+    <script>
+        $(document).ready(function() {
+            $("select[name=genre_num]").change(function(){
+
+                console.log($("select[name=genre_num]").val());
+                console.log("genre/" + `${$("select[name=genre_num]").val()}`);
+                genre_num = $('select[name=genre_num]').val();
+
+                $("#genre_show").attr("action", "genre/" + `${$("select[name=genre_num]").val()}` + "/");
+                $("#genre_show").submit();
+            });
+        // $('select[name=sort_num').change(function(){
+        //         console.log($('select[name=sort_num]').val());
+        //         console.log("genre/" + `${$('select[name=genre_num]').val()}` + "/" + `${$('select[name=sort_num]').val()}` + "/");
+        //         sort_num = $('select[name=sort_num]').val();
+        //         $("#genre_show").attr("action", `${$('select[name=sort_num]').val()}` + "/");
+        //         $('#genre_show').submit();
+        //     });
+    }); 
+
+    </script>
 {% endblock %}
