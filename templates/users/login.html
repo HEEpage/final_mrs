@@ -9,7 +9,7 @@
 <body>
     <h1>Login TEST</h1>
     <div class="container my-3">
-        <form action="{% url 'users:signin' %}" method="post" class="card pt-3">
+        <form action="{% url 'users:login' %}" method="post" class="card pt-3">
             {% csrf_token %}
         
             {{ form.as_div }}

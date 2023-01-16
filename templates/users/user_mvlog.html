@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Log</title>
+</head>
+<body>
+    
+    <h1> Movie Log TEST</h1>
+
+    {% for mv in mv_log_list %}
+        <p> {{ mv }} <a href="{% url 'users:user_mvlog_delete' mv.no %}"> X </a>   </p>
+    {% endfor %}
+    
+    <a href="{% url 'users:user_mvlog_add' %}"> 추가등록 </a>
+
+</body>
+</html>
