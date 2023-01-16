@@ -3,19 +3,28 @@
     <div>
         <form method="post" id="genre_show" action="" class="form" style="margin-left: 7%; margin-top: 5%;">
             {% csrf_token %}
-            <select name="genre_num" id="genre_num">
+            <!-- <select name="genre_num" id="genre_num">
                 {% for gt in genre_type %}
                     <option value="{{ forloop.counter }}">{{ gt }}</option>
                 {% endfor %}
-            </select>
-            <!-- <a href="" name="click" value="1" onclick="sort_click()">인기순</a>
-            <a href="" name="date" value="2" onclick="sort_click()">최신순</a> -->
+            </select> -->
+            {% for gt in genre_type %}
+            <input name="genre_num" type="radio" value="{{ forloop.counter }}">{{ gt }}
+            <br>
+            {% endfor %}
+            <hr>
             <!-- <select name="sort_num" id="sort_num">
                 <option value="None">정렬</option>
                 <option value="1">인기순</option>
                 <option value="2">최신순</option>
             </select> -->
+            <input name="sort_num" type="radio" value="1">인기순
+            <br>
+            <input name="sort_num" type="radio" value="2">최신순
+            <br>
+            <button name="gen_list" type="submit">filter</button>
         </form>
+        <hr>
         <form action="." method="get">
             <div class="row" style="margin-bottom:15px;">
                 <div class="col-lg-5">
@@ -35,7 +44,7 @@
             <div id="video_list_search" class="col-md-12">
             {% if search_list %}
                 {% for search in search_list %}
-                <h2><a href="">{{ search.title }}</a></h2>
+                <h2><a href="{% url 'movies:detail' search.id %}">{{ search.title }}</a></h2>
                 <p>{{ search.director }}</p>
                 <p>{{ gen.genre }}</p>
                 <p>{{ search.cast }}</p>
@@ -43,22 +52,23 @@
             {% endif %}
             {% if box_list.exists %}
                 {% for box in box_list %}
-                <h2><a href="">{{ box.no }}</a></h2>
+                <h2><a href="{% url 'movies:detail' box.id %}">{{ box.no }}</a></h2>
                 <p>{{ box.movie_id }}</p>
                 {% endfor %}
             {% endif %}
             {% if up_list.exists %}
                 {% for up in up_list %}
-                <h2><a href="">{{ up.no }}</a></h2>
+                <h2><a href="{% url 'movies:detail' up.id %}">{{ up.no }}</a></h2>
                 <p>{{ up.movie_id }}</p>
                 {% endfor %}
             {% endif %}
             {% if gen_list.exists %}
                 {% for gen in gen_list %}
-                <h2><a href="">{{ gen.title }}</a></h2>
+                <h2><a href="{% url 'movies:detail' gen.id %}">{{ gen.title }}</a></h2>
                 <p>{{ gen.director }}</p>
                 <p>{{ gen.genre }}</p>
                 <p>{{ gen.cast }}</p>
+                <p>{{ gen.release_date }}</p>
                 {% endfor %}
             {% endif %}
             </div>
@@ -66,22 +76,42 @@
     </div>
     <script>
         $(document).ready(function() {
-            $("select[name=genre_num]").change(function(){
+            console.log("ready");
+            $("button[name=gen_list]").click(function(){
+                console.log("click");
+                genre_num = $('input[type=radio][name=genre_num]:checked').val();
 
-                console.log($("select[name=genre_num]").val());
-                console.log("genre/" + `${$("select[name=genre_num]").val()}`);
-                genre_num = $('select[name=genre_num]').val();
+                console.log(genre_num);
+                // console.log(sort_num);
+                $("#genre_show").attr("action", "genre/" + `${$("input[type=radio][name=genre_num]:checked").val()}` + "/");
+                // $("#genre_show").setAttribute("action", "genre/" + `${$("input[type=radio][name=genre_num]:checked").val()}` + "/");
 
-                $("#genre_show").attr("action", "genre/" + `${$("select[name=genre_num]").val()}` + "/");
-                $("#genre_show").submit();
+                $("input[type=radio][name=genre_num][value='" + genre_num + "']").prop('checked', 'checked');
+                
+                if($('input[type=radio][name=sort_num]:checked').val() != null){
+                    sort_num = $('input[type=radio][name=sort_num]:checked').val();
+                    console.log("sort_num exist")
+                    $("#genre_show").attr("action", `${$("input[type=radio][name=sort_num]:checked").val()}` + "/");
+                }
+                $('#genre_show').submit();
+
             });
-        // $('select[name=sort_num').change(function(){
-        //         console.log($('select[name=sort_num]').val());
-        //         console.log("genre/" + `${$('select[name=genre_num]').val()}` + "/" + `${$('select[name=sort_num]').val()}` + "/");
-        //         sort_num = $('select[name=sort_num]').val();
-        //         $("#genre_show").attr("action", `${$('select[name=sort_num]').val()}` + "/");
-        //         $('#genre_show').submit();
-        //     });
+            // $("select[name=genre_num]").change(function(){
+
+            //     console.log($("select[name=genre_num]").val());
+            //     console.log("genre/" + `${$("select[name=genre_num]").val()}`);
+            //     genre_num = $('select[name=genre_num]').val();
+
+            //     $("#genre_show").attr("action", "genre/" + `${$("select[name=genre_num]").val()}` + "/");
+            //     $("#genre_show").submit();
+            // });
+            // $('select[name=sort_num]').change(function(){
+            //     console.log($('select[name=sort_num]').val());
+            //     console.log("genre/" + `${$('select[name=genre_num]').val()}` + "/" + `${$('select[name=sort_num]').val()}` + "/");
+            //     sort_num = $('select[name=sort_num]').val();
+            //     $("#genre_show").attr("action", `${$('select[name=sort_num]').val()}` + "/");
+            //     $('#genre_show').submit();
+            // });
     }); 
 
     </script>
