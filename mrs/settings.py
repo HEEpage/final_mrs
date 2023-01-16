@@ -45,6 +45,7 @@ INSTALLED_APPS = [
 
     # Team add
     'django_extensions',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
