@@ -1,6 +1,91 @@
 {% extends "movies/base.html" %}
 {% block content %}
     <div>
-        
+        <div>
+            <a href="{{ movie_detail.poster }}">포스터 이미지</a>
+            <h2>{{ movie_detail.title }}</h2>
+            <p>{{ movie_detail.director }}</p>
+            <p>{{ movie_detail.cast }}</p>
+            <p>{{ movie_detail.genre }}</p>
+            <p>{{ movie_detail.nation }}</p>
+            <p>{{ movie_detail.avg_grade }}</p>
+            <p>{{ movie_detail.viewer }}</p>
+            {{ movie_detail.running_time }}
+            <br>
+            {{ movie_detail.release_date }}
+            <br>
+            {{ movie_detail.ratings }}
+            <br>
+            <h3>{{ movie_detail.synosis }}</h3>
+            <p>{{ movie_detail.keyword }}</p>
+            <div>
+                {% if user.is_active %}
+                <form method="post" action="" id="wish">
+                    {% csrf_token %}
+                    <button name="wish" onclick="" type="submit" value="{{ movie_detail.id }}">위시리스트</button> 
+                    <a href="">평점 등록</a>
+                </form>
+                {% endif %}
+                <div>
+                {% if movie_detail.status == 0 %}
+                    {% if movie_watch.netflix %}
+                    <a href="{{ movie_watch.netflix_url }}">netflix</a>
+                    {% endif %}
+                    {% if movie_watch.watcha %}
+                    <a href="{{ movie_watch.watcha_url }}">watcha</a>
+                    {% endif %}
+                    {% if movie_watch.tving %}
+                    <a href="{{ movie_watch.tving_url }}">tving</a>
+                    {% endif %}
+                    {% if movie_watch.wavve %}
+                    <a href="{{ movie_watch.wavve_url }}">wavve</a>
+                    {% endif %}
+                <hr>
+                {% elif movie_detail.status == 1 %}
+                    {% if movie_watch.cgv %}
+                    <a href="">CGV</a>
+                    {% endif %}
+                    {% if movie_watch.lotte %}
+                    <a href="">Lotte</a>
+                    {% endif %}
+                    {% if movie_watch.megabox %}
+                    <a href="">Megabox</a>
+                    {% endif %}
+                <!-- {% elif movie_detail.status == 2 %} -->
+                {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
+    <div>
+        <p>wordcloud</p>
+        <img src="" alt="">
+    </div>
+    <div>
+        <h2>Reivew</h2>
+        <hr>
+        {% if movie_review.exists %}
+        {% for mr in movie_review %}
+            <div>
+                <h2>{{ mr.no }}</h2>
+                <p>{{ mr.grade }}</p>
+                <p>{{ mr.review }}</p>
+                <p>{{ mr.c_date }}</p>
+            </div>
+        {% endfor %}
+        {% endif %}
+    </div>
+    <script>
+        $(document).ready(function() {
+            console.log("-------------ready")
+            $("button[name=wish]").click(function(){
+                console.log("-------------click")
+                console.log($("button[name=wish]").val());
+                console.log("-------------wish")
+                wish = $("button[name=wish]").val();
+                $("#wish").submit();
+            });
+    }); 
+
+    </script>
 {% endblock %}

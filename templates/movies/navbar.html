@@ -6,6 +6,11 @@
                 <li class="nav-item">
                     <a class="nav-link" href="#">Login</a>
                 </li>
+                <li class="nav-item">
+                    {% if user.is_authenticated %}
+                        {{ user.username }} 님 환영합니다!
+                    {% endif %}
+                </li>
             </ul>
         </div>
     </div>
