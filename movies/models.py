@@ -104,3 +104,34 @@ class MovieGenre(models.Model) :
 
     def __str__(self) :
         return f'{self.pk} -- {self.type}'
+
+
+# 영화 감상 포인트 테이블
+class MoviePoint(models.Model) :
+    
+    movie_id = models.OneToOneField(
+        Movie, 
+        related_name='mv_point',
+        on_delete=models.CASCADE, 
+        db_column="movie_id",
+        primary_key=True
+    ) # 영화 고유 ID
+    
+    direction = models.FloatField(default=0) # 감독연출
+    ost = models.FloatField(default=0) # OST
+    acting = models.FloatField(default=0) # 배우연기
+    visual = models.FloatField(default=0) # 영상미
+    story = models.FloatField(default=0) # 스토리
+    stress = models.FloatField(default=0) # 스트레스 해소
+    touched = models.FloatField(default=0) # 감동
+    immerse = models.FloatField(default=0) # 몰입감
+    sympathy = models.FloatField(default=0) # 공감
+    enjoyment = models.FloatField(default=0) # 즐거움
+    tension = models.FloatField(default=0) # 긴장감
+    fear = models.FloatField(default=0) # 무서움
+    imagination = models.FloatField(default=0) # 상상력
+    cheerful = models.FloatField(default=0) # 유쾌함
+    inspiration = models.FloatField(default=0) # 영감자극
+    reality = models.FloatField(default=0) # 현실감
+    romance = models.FloatField(default=0) # 설렘
+
