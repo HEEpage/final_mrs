@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from movies.models import Movie, MovieUpcoming, MovieBoxOffice, MovieReviewDummy, MovieWatch
 from users.models import UserMovieLog, UserMovieWish
-                                                                                                                           
+
+
 class BoxOfficeSerializers(serializers.ModelSerializer) :
     class Meta :
         model = MovieBoxOffice
@@ -10,6 +11,7 @@ class BoxOfficeSerializers(serializers.ModelSerializer) :
     def to_representation(self, instance):
         self.fields['movie_id'] = MovieSerializers(read_only=True)
         return super(BoxOfficeSerializers, self).to_representation(instance)
+
 
 class UpcomingSerializers(serializers.ModelSerializer) :
     class Meta :
@@ -39,8 +41,7 @@ class UserMoiveLogSerializers(serializers.ModelSerializer):
         fields = ('__all__')
 
 
-# TEST
-class ReviewCreateSerializer(serializers.ModelSerializer):
+class UserMovieWishSerializers(serializers.ModelSerializer) :
     class Meta :
-        model = UserMovieLog
-        fields = ('user_email', 'movie_id', 'grade', 'review')
+        model = UserMovieWish
+        fields = ('__all__')
