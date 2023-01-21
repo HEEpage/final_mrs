@@ -65,8 +65,8 @@ def infoParser ( response=None ):
 
         director = ""
         r_time = None
-        genre = "미분류"
-        actors = "정보없음"
+        genre = ""
+        actors = ""
         ratings = ""
         date = ""
 
@@ -127,7 +127,7 @@ def infoParser ( response=None ):
 
         story, s_keyword = storyParser(response)
 
-        # review
+        # review ----------------------------------------------------------------------------
         iframe = info_soup.select_one("#pointAfterListIframe")['src']
         address = "https://movie.naver.com" + iframe
         response.get(address)
@@ -171,11 +171,11 @@ def storyParser(response=None):
     story_keyword = ""
 
     if check is not None:
-        context = story_soup.select_one("div.story_area > p.con_tx").get_text(strip=True)
+        context = story_soup.select_one("div.story_area > p.con_tx").get_text()
 
         if check.select_one("h5.h_tx_story") is not None:
-            head = story_soup.select_one("h5.h_tx_story").get_text(strip=True)
-            story = head + context
+            head = story_soup.select_one("h5.h_tx_story").get_text()
+            story = head +context
         else:
             story = context
 
@@ -208,7 +208,7 @@ def reviewParser(address, response=None):
         pages = math.ceil(cnt / 10)
 
         if  cnt <= 10000:
-            for page in range(pages if pages < 10 else 10):
+            for page in range(pages if pages < 5 else 5):
                 
                 response.get(f"{address}&page={page+1}")
                 data_soup = BeautifulSoup(response.page_source, 'html.parser')
@@ -222,16 +222,16 @@ def reviewParser(address, response=None):
 
                     # 리뷰 글
                     ment = f"#_filtered_ment_{idx}"
-
-                    review = line.select_one(ment).get_text(strip=True)
-
                     # ment가 길다면...
-                    # unfold_ment = f"#_unfold_ment{idx} > a"
+                    unfold_ment = f"#_unfold_ment{idx} > a"
                     
-                    # if line.select_one(unfold_ment) is None:
-                        # review = line.select_one(ment).get_text(strip=True)
-                    # else:
-                    #     review = line.select_one(unfold_ment)['data-src']
+                    if line.select_one(unfold_ment) is None:
+                        review = line.select_one(ment).get_text(strip=True)
+                    else:
+                        review = line.select_one(unfold_ment)['data-src']
+
+                    if len(review) <= 10 or len(review) >= 200 :
+                        continue
 
                     # 리뷰 등록 일자
                     c_date = line.select_one("div.score_reple > dl > dt > em:nth-child(2)").get_text(strip=True).replace(".","-")
@@ -240,7 +240,7 @@ def reviewParser(address, response=None):
                     
 
         elif cnt > 10000 :
-            for page in range(20):
+            for page in range(10):
                 response.get(f"{address}&page={page+1}")
                 data_soup = BeautifulSoup(response.page_source, 'html.parser')
 
@@ -253,18 +253,17 @@ def reviewParser(address, response=None):
 
                     # 리뷰 글
                     ment = f"#_filtered_ment_{idx}"
-
-                    review = line.select_one(ment).get_text(strip=True)
-
                     # ment가 길다면...
-                    # unfold_ment = f"#_unfold_ment{idx} > a"
+                    unfold_ment = f"#_unfold_ment{idx} > a"
                     
-                    # if line.select_one(unfold_ment) is None:
-                        # review = line.select_one(ment).get_text(strip=True)
-                    # else:
-                    #     review = line.select_one(unfold_ment)['data-src']
+                    if line.select_one(unfold_ment) is None:
+                        review = line.select_one(ment).get_text(strip=True)
+                    else:
+                        review = line.select_one(unfold_ment)['data-src']
 
-
+                    if len(review) <= 10 or len(review) >= 200 :
+                        continue
+                    
                     # 리뷰 등록 일자
                     c_date = line.select_one("div.score_reple > dl > dt > em:nth-child(2)").get_text(strip=True).replace(".","-")
                     
