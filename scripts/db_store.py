@@ -9,7 +9,6 @@ def run() :
     # data store ------------------------------------------
     
     years = [ 2019, 2020, 2021, 2022, 2023 ]
-    no = 1
 
     for year in tqdm(years, 
                         total = len(years), ## 전체 진행수
@@ -43,5 +42,4 @@ def run() :
 
         for m_id, reviews in movie_review.items():
             for review in reviews:
-                MovieReviewDummy(no=no, movie_id=Movie.objects.get(id=m_id), **review).save()
-                no += 1
+                MovieReviewDummy(movie_id=Movie.objects.get(id=m_id), **review).save()
