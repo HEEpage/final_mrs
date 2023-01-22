@@ -7,7 +7,7 @@ import time
 import traceback
 
 # keyword 추출 모델
-from static.preprocessing.extract_tag import main
+from static.tag_model.extract_tag import main
 
 def topidParser(response=None):
 
