@@ -1,91 +1,561 @@
-{% extends "movies/base.html" %}
-{% block content %}
-    <div>
-        <div>
-            <a href="{{ movie_detail.poster }}">포스터 이미지</a>
-            <h2>{{ movie_detail.title }}</h2>
-            <p>{{ movie_detail.director }}</p>
-            <p>{{ movie_detail.cast }}</p>
-            <p>{{ movie_detail.genre }}</p>
-            <p>{{ movie_detail.nation }}</p>
-            <p>{{ movie_detail.avg_grade }}</p>
-            <p>{{ movie_detail.viewer }}</p>
-            {{ movie_detail.running_time }}
-            <br>
-            {{ movie_detail.release_date }}
-            <br>
-            {{ movie_detail.ratings }}
-            <br>
-            <h3>{{ movie_detail.synosis }}</h3>
-            <p>{{ movie_detail.keyword }}</p>
-            <div>
-                {% if user.is_active %}
-                <form method="post" action="" id="wish">
-                    {% csrf_token %}
-                    <button name="wish" onclick="" type="submit" value="{{ movie_detail.id }}">위시리스트</button> 
-                    <a href="">평점 등록</a>
-                </form>
-                {% endif %}
-                <div>
-                {% if movie_detail.status == 0 %}
-                    {% if movie_watch.netflix %}
-                    <a href="{{ movie_watch.netflix_url }}">netflix</a>
-                    {% endif %}
-                    {% if movie_watch.watcha %}
-                    <a href="{{ movie_watch.watcha_url }}">watcha</a>
-                    {% endif %}
-                    {% if movie_watch.tving %}
-                    <a href="{{ movie_watch.tving_url }}">tving</a>
-                    {% endif %}
-                    {% if movie_watch.wavve %}
-                    <a href="{{ movie_watch.wavve_url }}">wavve</a>
-                    {% endif %}
-                <hr>
-                {% elif movie_detail.status == 1 %}
-                    {% if movie_watch.cgv %}
-                    <a href="">CGV</a>
-                    {% endif %}
-                    {% if movie_watch.lotte %}
-                    <a href="">Lotte</a>
-                    {% endif %}
-                    {% if movie_watch.megabox %}
-                    <a href="">Megabox</a>
-                    {% endif %}
-                <!-- {% elif movie_detail.status == 2 %} -->
-                {% endif %}
+{% extends 'partials/base.html' %}
+
+{% block styles %}
+<link rel="stylesheet" href="/static/css/prettyPhoto.css">
+<link rel="stylesheet" href="/static/my_style.css">
+{% endblock styles %}
+
+
+{% block main-content %}
+
+<!-- LOADER -->
+<div id="preloader">
+    <img class="preloader" src="/static/images/loader.gif" alt="">
+</div><!-- end loader -->
+<!-- END LOADER -->
+
+<div id="wrapper">
+
+    <div id="data-area">
+        <header class="header header-normal">
+            <div class="container">
+                {% include 'partials/navbar.html' %}
+            </div><!-- end container -->
+        </header>
+        
+        <section class="section cb">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="tagline-message page-title">
+                            <h3>[[ movie.title ]]</h3>
+                        </div>
+                    </div><!-- end col -->
+                    <div class="col-md-6 text-right">
+                        <ul class="breadcrumb">
+                            <li><a href="javascript:void(0)">Home</a></li>
+                            <li class="active">Movie</li>
+                        </ul>
+                    </div>
+                </div><!-- end row -->
+            </div><!-- end container -->
+        </section><!-- end section -->
+        <section class="section" style="padding: 3rem;">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-3 shop-media">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="image-wrap entry">
+                                    <img :src="movie.poster" alt="" class="img-responsive">
+                                </div><!-- end image-wrap -->
+                            </div>
+                        </div><!-- end row -->
+                        <hr class="invis">
+                    </div><!-- end col -->
+                    <div class="col-md-9">
+                        <div class="shop-desc">
+                            <ul class="list-inline">
+                                <li>
+                                    {% if "전체" in movie_detail.ratings %}
+                                    <h3><img src="https://www.kmrb.or.kr/resources/homepage/kor/_Img/Content/ratingAll_ico1.png"
+                                            alt="" style="width: 30px;"> {{ movie_detail.title }}</h3>
+                                    {% elif "12" in movie_detail.ratings %}
+                                    <h3><img src="https://www.kmrb.or.kr/resources/homepage/kor/_Img/Content/ratingAll_ico2.png"
+                                            alt="" style="width: 30px;"> {{ movie_detail.title }}</h3>
+                                    {% elif "15" in movie_detail.ratings %}
+                                    <h3><img src="https://www.kmrb.or.kr/resources/homepage/kor/_Img/Content/ratingAll_ico3.png"
+                                            alt="" style="width: 30px;"> {{ movie_detail.title }}</h3>
+                                    {% elif "불가" in movie_detail.ratings %}
+                                    <h3><img src="https://www.kmrb.or.kr/resources/homepage/kor/_Img/Content/ratingAll_ico4.png"
+                                            alt="" style="width: 30px;"> {{ movie_detail.title }}</h3>
+                                    {% else %}
+                                    <h3>{{ movie_detail.title }}</h3>
+                                    {% endif %}
+                                </li>
+                                <li>
+                                    {% if movie_detail.status == 1 %}
+                                    <em class="round red">
+                                        <span>현재상영중</span>
+                                    </em>
+                                    {% elif movie_detail.status == 2 %}
+                                    <em class="round red">
+                                        <span>개봉예정</span>
+                                    </em>
+                                    {% endif %}
+                                </li>
+                            </ul>
+                            <!-- 영화 평균 평점 -->
+                            <ul class="list-inline rating">
+                                <li><i class="fa fa-star" style="font-size: 20px;"></i></li>
+                                <li><small>[[ movie.avg_grade ]]</small></li>
+                            </ul>
+                            <!-- 감독, 출연진, 장르, 개봉일 -->
+                            <ul class="list-inline">
+                                <li> 감독 : [[ movie.director ]] </li>
+                                <li> 출연진 : [[ movie.cast ]]</li>
+                            </ul>
+                            <p> 장르 : [[ movie.genre ]]</p>
+                            <p> 개봉일 : [[ movie.release_date ]]</p>
+                            <!-- 찜 기능, 평점 등록, 서비스 확인 -->
+                            <div class="shop-meta">
+                                <div class="row">
+                                    <div class="col-md-4 text-center">
+                                        <span>관심영화등록</span>
+                                        <p></p>
+                                        <a id="like" v-on:click="addWishList(movie.id)">
+                                            <img v-if="wish_status == 0" id="like_img" src="https://cdn-icons-png.flaticon.com/512/1000/1000621.png" alt="" style="width: 40px;">
+                                            <img v-if="wish_status == 1" id="like_img" src="https://cdn-icons-png.flaticon.com/512/535/535183.png" alt="" style="width: 40px;">
+                                        </a>
+                                    </div>
+                                    <div class="col-md-4 text-center">
+                                        <span>평점등록(1-10)</span>
+                                        <p></p>
+                                        <div class="starpoint_wrap">
+                                            <div class="starpoint_box">
+                                                <label for="starpoint_1" class="label_star" title="1"><span class="blind">1점</span></label>
+                                                <label for="starpoint_2" class="label_star" title="2"><span class="blind">2점</span></label>
+                                                <label for="starpoint_3" class="label_star" title="3"><span class="blind">3점</span></label>
+                                                <label for="starpoint_4" class="label_star" title="4"><span class="blind">4점</span></label>
+                                                <label for="starpoint_5" class="label_star" title="5"><span class="blind">5점</span></label>
+                                                <label for="starpoint_6" class="label_star" title="6"><span class="blind">6점</span></label>
+                                                <label for="starpoint_7" class="label_star" title="7"><span class="blind">7점</span></label>
+                                                <label for="starpoint_8" class="label_star" title="8"><span class="blind">8점</span></label>
+                                                <label for="starpoint_9" class="label_star" title="9"><span class="blind">9점</span></label>
+                                                <label for="starpoint_10" class="label_star" title="10"><span class="blind">10점</span></label>
+                                                <input type="radio" name="starpoint" id="starpoint_1" class="star_radio" v-model="star" value="1">
+                                                <input type="radio" name="starpoint" id="starpoint_2" class="star_radio" v-model="star" value="2">
+                                                <input type="radio" name="starpoint" id="starpoint_3" class="star_radio" v-model="star" value="3">
+                                                <input type="radio" name="starpoint" id="starpoint_4" class="star_radio" v-model="star" value="4">
+                                                <input type="radio" name="starpoint" id="starpoint_5" class="star_radio" v-model="star" value="5">
+                                                <input type="radio" name="starpoint" id="starpoint_6" class="star_radio" v-model="star" value="6">
+                                                <input type="radio" name="starpoint" id="starpoint_7" class="star_radio" v-model="star" value="7">
+                                                <input type="radio" name="starpoint" id="starpoint_8" class="star_radio" v-model="star" value="8">
+                                                <input type="radio" name="starpoint" id="starpoint_9" class="star_radio" v-model="star" value="9">
+                                                <input type="radio" name="starpoint" id="starpoint_10" class="star_radio" v-model="star" value="10">
+                                                <span class="starpoint_bg"></span>
+                                            </div>
+                                            <a v-if="review_status == 0" type="button" href="#" data-toggle="modal" data-target="#log-modal" v-on:click="gradeClick()">등록</a>
+                                            <a v-if="review_status == 1" type="button" href="#" data-toggle="modal" data-target="#log-modal">평점을 이미 등록했습니다.</a>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 text-center">
+                                        <span>관람 가능 서비스</span>
+                                        <p></p>
+                                        {% if movie_detail.status == 0 %}
+                                        <div>
+                                            {% if movie_watch.netflix %}
+                                            <a href="{{ movie_watch.netflix_url }}"><img src="/static/images/netflix_img.png" alt="" style="width: 40px"></a>
+                                            &nbsp;
+                                            {% endif %}
+                                            {% if movie_watch.watcha %}
+                                            <a href="{{ movie_watch.watcha_url }}"><img src="/static/images/watcha_img.png" alt="" style="width: 40px"></a>
+                                            &nbsp;
+                                            {% endif %}
+                                            {% if movie_watch.wavve %}
+                                            <a href="{{ movie_watch.wavve_url }}"><img src="/static/images/wavve_img.png" alt="" style="width: 40px"></a>
+                                            &nbsp;
+                                            {% endif %}
+                                            {% if movie_watch.tving %}
+                                            <a href="{{ movie_watch.tving_url }}"><img src="/static/images/tving_img.png" alt="" style="width: 40px"></a>
+                                            {% endif %}
+                                        </div>
+                                        {% elif movie_detail.status == 1 %}
+                                        <div>
+                                            {% if movie_watch.cgv %}
+                                            <a href="https://www.cgv.co.kr/"><img src="/static/images/cgv_img.png" alt="" style="width: 40px"></a>
+                                            &nbsp;
+                                            {% endif %}
+                                            {% if movie_watch.lotte %}
+                                            <a href="https://www.lottecinema.co.kr/NLCHS"><img src="/static/images/lotte_img.png" alt="" style="width: 40px"></a>
+                                            &nbsp;
+                                            {% endif %}
+                                            {% if movie_watch.megabox %}
+                                            <a href="https://www.megabox.co.kr/"><img src="/static/images/megabox_img.png" alt="" style="width: 40px"></a>
+                                            {% endif %}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div><!-- end shop meta -->
+                        </div><!-- end desc -->
+                </div><!-- end row -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="shop-extra">
+                            <ul class="nav nav-tabs">
+                                <li class="active"><a data-toggle="tab" href="#home">Synopsis</a></li>
+                                <li><a data-toggle="tab" href="#menu1">Reviews ([[ review.length ]])</a></li>
+                            </ul>
+                            <div class="tab-content">
+                                <div id="home" class="tab-pane active">
+                                    <p>{{ movie_detail.synopsis | linebreaksbr }}</p>
+                                </div>
+                                <div id="menu1" class="tab-pane fade">
+                                    
+                                    <div class="row" v-for="re in review">
+                                        <div class="col-md-2 rating text-center">
+                                            <div v-if="re.grade >= 9">
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                            </div>
+                                            
+                                            <div v-else-if="re.grade >= 7">
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star-o"></i>
+                                            </div>
+                                         
+                                            <div v-else-if="re.grade >= 5">
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star-o"></i>
+                                                <i class="fa fa-star-o"></i>
+                                            </div>
+                                            
+                                            <div v-else-if="re.grade >= 3">
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star-o"></i>
+                                                <i class="fa fa-star-o"></i>
+                                                <i class="fa fa-star-o"></i>
+                                            </div>
+                                         
+                                            <div v-else>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star-o"></i>
+                                                <i class="fa fa-star-o"></i>
+                                                <i class="fa fa-star-o"></i>
+                                                <i class="fa fa-star-o"></i>
+                                            </div>
+                                          
+                                        </div>
+                                        <div class="col-md-8">
+                                            <p>[[ re.review ]]</p>
+                                        </div>
+                                        <div class="col-md-2 text-center">
+                                            <p>[[ re.c_date ]]</p>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                </div>
+                            </div>
+                        </div><!-- end shop-extra -->
+                    </div><!-- end col -->
+                </div><!-- end row -->
+                <div class="related-products">
+                    <div class="text-widget">
+                        <h3>Related Products</h3>
+                    </div>
+                    <div class="row blog-grid shop-grid">
+                        <div class="col-md-3">
+                            <div class="course-box shop-wrapper">
+                                <div class="image-wrap entry">
+                                    <img src="/static/upload/shop_01.jpg" alt="" class="img-responsive">
+                                    <div class="magnifier">
+                                        <a href="shop-single.html" title=""><i class="flaticon-add"></i></a>
+                                    </div>
+                                </div>
+                                <!-- end image-wrap -->
+                                <div class="course-details shop-box text-center">
+                                    <h4>
+                                        <a href="shop-single.html" title="">Brown leather bag</a>
+                                    </h4>
+                                </div>
+                            </div><!-- end footer -->
+                        </div><!-- end box -->
+                    </div><!-- end col -->
+                </div><!-- end related -->
+            </div><!-- end container -->
+        </section>
+        <!-- BEGIN # MODAL LOGIN -->
+        <div class="modal fade" id="log-modal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <!-- Begin # DIV Form -->
+                    <div id="div-forms">
+                        <div class="modal-boxed">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span class="flaticon-add" aria-hidden="true"></span>
+                            </button>
+                            <h2 v-if="review_status == 0">영화 기록 등록</h2>
+                            <h2 v-if="review_status == 1">영화 기록 확인</h2>
+                            <hr style="background: #FF1E56; height: 2px; border: 0;">
+                            <form id="log-form" method="post" action="#" ref="logForm" >
+                                {% csrf_token %}
+                                <div class="modal-body">
+                                    <p>
+                                        <label for=""> 선택영화 : </label>
+                                        <strong>&nbsp;[[ movie.title ]] </strong>
+                                    </p>
+                                    <p>
+                                        <label> 평점 : </label>
+                                        <strong>&nbsp; [[ star ]]</strong>
+                                    </p>
+                                    <p>
+                                        <label> 리뷰
+                                            <sup v-if="review_status == 0">(<span id="nowByte">0</span>/300bytes)</sup>
+                                        </label>
+                                        <textarea v-if="review_status == 0" v-model="user_review" rows="10" cols="50" class="form-control" id="review" name="review"
+                                        onkeyup="fn_checkByte(this)"></textarea>
+                                        &nbsp;&nbsp;
+                                        <em v-if="review_status == 1"> [[ user_review ]]</em>
+                                    </p>
+                                    <div v-if="review_status == 0" class="text-right"><button class="btn btn-primary" data-dismiss="modal" aria-label="Close" @click=addMovieLog> 등록 </button></div>
+                                    <div v-if="review_status == 1" class="text-right">
+                                        <button class="btn btn-primary" data-dismiss="modal" aria-label="Close"> 확인 </button>
+                                    </div>
+                                </div>
+                            </form><!-- End # Login Form -->
+                        </div>
+                    </div><!-- End # DIV Form -->
                 </div>
             </div>
-        </div>
+        </div> <!-- END # MODAL LOGIN -->
     </div>
-    <div>
-        <p>wordcloud</p>
-        <img src="" alt="">
-    </div>
-    <div>
-        <h2>Reivew</h2>
-        <hr>
-        {% if movie_review.exists %}
-        {% for mr in movie_review %}
-            <div>
-                <h2>{{ mr.no }}</h2>
-                <p>{{ mr.grade }}</p>
-                <p>{{ mr.review }}</p>
-                <p>{{ mr.c_date }}</p>
-            </div>
-        {% endfor %}
-        {% endif %}
-    </div>
-    <script>
-        $(document).ready(function() {
-            console.log("-------------ready")
-            $("button[name=wish]").click(function(){
-                console.log("-------------click")
-                console.log($("button[name=wish]").val());
-                console.log("-------------wish")
-                wish = $("button[name=wish]").val();
-                $("#wish").submit();
-            });
-    }); 
+</div><!-- end wrapper -->
 
-    </script>
-{% endblock %}
+{% endblock main-content %}
+
+{% block scripts %}
+<script src="/static/js/jquery.prettyPhoto.js"></script>
+
+<script>
+
+    function fn_checkByte(obj) {
+        const maxByte = 300; //최대 100바이트
+        const text_val = obj.value; //입력한 문자
+        const text_len = text_val.length; //입력한 문자수
+
+        let totalByte = 0;
+        for (let i = 0; i < text_len; i++) {
+            const each_char = text_val.charAt(i);
+            const uni_char = escape(each_char); //유니코드 형식으로 변환
+            if (uni_char.length > 4) {
+                // 한글 : 2Byte
+                totalByte += 2;
+            } else {
+                // 영문,숫자,특수문자 : 1Byte
+                totalByte += 1;
+            }
+        }
+
+        if (totalByte > maxByte) {
+            alert("최대 300Byte까지만 입력가능합니다.");
+            document.getElementById("nowByte").innerText = totalByte;
+            document.getElementById("nowByte").style.color = "red";
+        } else {
+            document.getElementById("nowByte").innerText = totalByte;
+            document.getElementById("nowByte").style.color = "green";
+        }
+    }
+
+    axios.defaults.xsrfCookieName = 'csrftoken';
+    axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN';
+
+    const MovieDetailApp = {
+        delimiters: ['[[', ']]'],
+
+        data() {
+            return {
+                movie: [],
+                reviewdummy: [],
+                review: [],
+
+                userEmail: null,
+                star: null,
+                user_review: null,
+
+                wish_no : null,
+                wish_status: 0,
+                review_status: 0,
+            }
+        },
+
+        created() {
+            console.log("데이터 가져오는 중........");
+            const movieId = location.pathname.split('/')[3];
+            this.getUser()
+            this.getMovieDetail(movieId)
+            this.getMovieReview(movieId)
+            this.getMovieReviewDummy(movieId)
+            this.getWishStatus(movieId)
+            this.getReviewStatus(movieId)
+        },
+
+        methods: {
+
+            gradeClick() {
+                console.log("평점클릭")
+                console.log(this.star)
+            },
+
+            getUser() {
+                console.log("로그인 유저 정보 가져오기 ... ")
+
+                axios.get(`http://127.0.0.1:8000/api/accounts/`)
+                    .then(res => {
+                        console.log("USERINFO GET RES", res);
+                        this.userEmail = res.data.email
+                    })
+            },
+
+            getMovieDetail(movieId) {
+                console.log("영화 상세정보 가져오기 ....")
+
+                axios.get(`http://127.0.0.1:8000/api/movies?code=${movieId}`)
+                    .then(res => {
+                        console.log("MOVIEDETAIL GET RES", res);
+                        this.movie = res.data
+                    })
+            },
+
+            getMovieReview(movieId) {
+                console.log("영화 관람객 리뷰 가져오기 ....")
+
+                axios.get(`http://127.0.0.1:8000/api/movies/review/?code=${movieId}`)
+                    .then(res => {
+                        console.log("REVEIW GET RES", res);
+                        for (let data in res.data){
+                            this.review.push(res.data[data]);
+                        }
+                    })
+            },
+
+            getMovieReviewDummy(movieId) {
+                console.log("영화 리뷰 더미 가져오기 ....")
+
+                axios.get(`http://127.0.0.1:8000/api/movies/review/list?code=${movieId}`)
+                    .then(res => {
+                        console.log("REVEIWDUMMY GET RES", res);
+                        this.reviewdummy = res.data;
+                        for (let data in res.data){
+                            this.review.push(res.data[data]);
+                        }
+                    })
+            },
+
+
+            getWishStatus(movieId) {
+                console.log("관심영화 등록 확인")
+                
+                axios.get(`http://127.0.0.1:8000/api/accounts/wish/status?code=${movieId}`)
+                    .then(res => {
+                        if (res.data.length != 0){
+                            this.wish_no = res.data.no
+                            this.wish_status = 1
+                        }
+                    })
+                    .catch(err => {
+                        console.log("getWishStatus ERR.RESPONSE", err.response);
+                        // alert(`${err.response.status} ${err.response.statusText}`);
+
+                    })
+                
+            },
+
+            getReviewStatus(movieId) {
+                console.log("리뷰 남겼는지 안남겼는지 확인")
+                
+                axios.get(`http://127.0.0.1:8000/api/accounts/review/status?code=${movieId}`)
+                    .then(res => {
+                        console.log("기록이 있네용", res.data)
+                        if (res.data.length != 0){
+                            this.review_status = 1
+                            this.star = res.data.grade
+                            this.user_review = res.data.review
+                        }
+                    })
+                    .catch(err => {
+                        console.log("getReviewStatus ERR.RESPONSE", err.response);
+                        // alert(`${err.response.status} ${err.response.statusText}`);
+                    })
+                
+            },
+            
+
+            // 영화 wish 추가
+            addWishList(movieId) {
+                let whiteHeart = "https://cdn-icons-png.flaticon.com/512/1000/1000621.png"
+                let fullHeart = "https://cdn-icons-png.flaticon.com/512/535/535183.png"
+                let img = document.querySelector("#like_img")
+        
+                if (img.src == whiteHeart) {
+                    img.src = fullHeart
+
+                    formdata = {
+                        "user_email": this.userEmail,
+                        "movie_id": this.movie.id,
+                    }
+
+                    axios.post(`http://127.0.0.1:8000/api/accounts/wish/`, formdata)
+                        .then(res => {
+                            alert("관심영화 추가 완료")
+                            this.wish_no = res.data.no
+                        })
+                        .catch(err => {
+                            console.log("addWishList POST ERR.RESPONSE", err.response);
+                            alert(`이미 관심 영화로 등록하셨습니다.`);
+                            img.src = whiteHeart
+                        });
+
+
+                } else {
+                    img.src = whiteHeart
+
+                    axios.delete(`http://127.0.0.1:8000/api/accounts/wish/${this.wish_no}`)
+                    .then(res => {
+                        alert("관심영화 삭제 완료")
+                        this.wish_no = null;
+                    })
+                    .catch(err => {
+                        console.log("delWishList DEL ERR.RESPONSE", err.response);
+                        alert(`${err.response.status} ${err.response.statusText}`);
+                    });
+                }
+
+            },
+
+            resetForm() {
+                console.log("resetForm()...");
+                this.$refs.logForm.reset();
+            },
+
+            // 영화 기록 추가
+            addMovieLog() {
+                console.log("submitForm()...");
+
+                formdata = {
+                    "grade" : this.star,
+                    "review" : this.user_review,
+                    "movie_id" : this.movie.id,
+                    "user_email" : this.userEmail,
+                }
+
+                axios.post('/api/movies/review/', formdata)
+                    .then(res => {
+                        console.log("CREATE-LOG POST RES", res);
+                        this.review.push(res.data);
+                    })
+                    .catch(err => {
+                        console.log("CREATE-LOG GET ERR.RESPONSE", err.response);
+                        alert(`${err.response.status} ${err.response.statusText}`);
+                    });
+                this.resetForm();
+            },
+
+        },
+    };
+
+    Vue.createApp(MovieDetailApp).mount('#data-area')
+
+
+
+</script>
+{% endblock scripts %}

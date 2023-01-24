@@ -17,12 +17,12 @@ def movieGenreList(request, genre_num, sort_num=None): #
     gen_list = Movie.objects.filter(genre__contains=genre_type.type)
     # print(gen_list)
 
-    if sort_num == 1: # 장르 필터링 + 클릭수가 많은 순
-        gen_list = Movie.objects.filter(genre__contains=GENRE_TYPE[genre_num]).order_by(-cnt_click)
-    elif sort_num == 2: # 장르 필터링 + 최신순
-        gen_list = Movie.objects.filter(genre__contains=GENRE_TYPE[genre_num]).order_by(-release_date)
-    elif sort_num == None: # 장르 필터링
-        gen_list = Movie.objects.filter(genre__contains=GENRE_TYPE[genre_num])
+    # if sort_num == 1: # 장르 필터링 + 클릭수가 많은 순
+    #     gen_list = Movie.objects.filter(genre__contains=GENRE_TYPE[genre_num]).order_by(-cnt_click)
+    # elif sort_num == 2: # 장르 필터링 + 최신순
+    #     gen_list = Movie.objects.filter(genre__contains=GENRE_TYPE[genre_num]).order_by(-release_date)
+    # elif sort_num == None: # 장르 필터링
+    #     gen_list = Movie.objects.filter(genre__contains=GENRE_TYPE[genre_num])
 
     context = {
         'genre_num': genre_num,
@@ -70,8 +70,11 @@ def movieUpcomingList(request):
 def movieDetail(request, movie_id):
     movie_detail = Movie.objects.get(id=movie_id)
     movie_review = MovieReviewDummy.objects.filter(movie_id=movie_id)
-    movie_watch = MovieWatch.objects.get(movie_id=movie_id)
-    print(movie_watch)
+    
+    if movie_detail.status != 2:
+        movie_watch = MovieWatch.objects.get(movie_id=movie_id)
+    else:
+        movie_watch = []
 
     if request.POST:
         user_email = request.user.email

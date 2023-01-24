@@ -1,61 +1,100 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MY PAGE</title>
-</head>
-<body>
+{% extends 'partials/base.html' %}
 
-    <h1> MY PAGE </h1>
+{% block styles %}
+<link rel="stylesheet" href="/static/my_style.css">
+{% endblock styles %}
 
-    <p> <a href="{% url 'users:update' %}"> 정보 수정 </a> </p>
-    <p> <a href="{% url 'users:user_mvlog' %}"> 영화 기록 </a> </p>
-    <p> <a href="{% url 'users:user_wish' %}"> 위시리스트 </a> </p>
+{% block main-content %}
+<!-- LOADER -->
+<div id="preloader">
+    <img class="preloader" src="/static/images/loader.gif" alt="">
+</div><!-- end loader -->
+<!-- END LOADER -->
 
-    <hr/>
+<div id="wrapper">
 
-    {% if stats %}
+    <header class="header header-normal">
+        <div class="container">
+            {% include 'partials/navbar.html' %}
+        </div><!-- end container -->
+    </header>
 
-        <h3> 별점 분포 </h3>
-        <p> 별점 평균 : {{ stats.grades.mean_val | floatformat:2 }} </p>
-        <p> 별점 개수 : {{ stats.grades.len_val }} </p>
-        <p> 많이 준 별점 : {{ stats.grades.mode_val }} </p>
+    <section class="section db">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="tagline-message page-title text-center">
+                        <h3>마이페이지</h3>
+                    </div>
+                </div><!-- end col -->
+            </div><!-- end row -->
+        </div><!-- end container -->
+    </section><!-- end section -->
 
-        <hr/>
+    <section class="section gb nopadtop">
+        <div class="container">
+            <div class="boxed">
+                <div class="row">
+                    <div class="content blog-list">
+                        <div class="content boxed-comment clearfix">
+                            <div class="comments-list">
+                                <div class="media">
+                                    <a class="media-left" href="#">
+                                        <img src="/static/images/profile.png" alt="user_profile" class="img-profile">
+                                    </a>
+                                    <div class="media-body">
+                                        <h2>{{ username }}</h2>
+                                        <div class="text-right">
+                                            <a href="{% url 'users:user_wish' %}" class="btn btn-primary mypage">위시리스트</a>
+                                            &nbsp;&nbsp;
+                                            <a href="{% url 'users:user_mvlog' %}" class="btn btn-primary mypage">영화 기록</a>
+                                            &nbsp;&nbsp;
+                                            <a href="{% url 'users:update' %}" class="btn btn-primary mypage">정보 수정</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div><!-- end content -->
+                    </div>
+                </div><!-- end row -->
+                <div class="row text-center">
+                    
+                    {% if stats %}
+                    <h3> 별점 분포 </h3>
+                    <p> 별점 평균 : {{ stats.grades.mean_val | floatformat:2 }} </p>
+                    <p> 별점 개수 : {{ stats.grades.len_val }} </p>
+                    <p> 많이 준 별점 : {{ stats.grades.mode_val }} </p>
+                    <hr/>
+                    <h3> 선호 키워드</h3>
+                    {% for keyword, k_score in stats.keywords %}
+                        <p> {{ keyword }} {{ k_score }} </p>
+                    {% endfor %}
+                    <hr/>
+                    <h3> 선호 배우</h3>
+                    {% for cast, c_score in stats.casts %}
+                        <p> {{ cast }} {{ c_score }} </p>
+                    {% endfor %}
+                    <hr/>
+                    <h3> 선호 감독</h3>
+                    {% for director, d_score in stats.directors %}
+                        <p> {{ director }} {{ d_score }} </p>
+                    {% endfor %}
+                    <hr/>
+                    
+                    <h3> 선호 장르</h3>
+                    {% for genre, g_score in stats.genres %}
+                        <p> {{ genre }} {{ g_score }} </p>
+                    {% endfor %}
+                    <hr/>
+                    <h3> 감상 시간 </h3> {{ stats.times.hour }}시간 {{ stats.times.minute }}분
+                    
+                                {% endif %}
+                </div>
+            </div><!-- end boxed -->
+        </div><!-- end container -->
+    </section>
 
-        <h3> 선호 키워드</h3>
-        {% for keyword, k_score in stats.keywords %}
-            <p> {{ keyword }} {{ k_score }} </p>
-        {% endfor %}
+</div><!-- end wrapper -->
 
-        <hr/>
 
-        <h3> 선호 배우</h3>
-        {% for cast, c_score in stats.casts %}
-            <p> {{ cast }} {{ c_score }} </p>
-        {% endfor %}
-
-        <hr/>
-
-        <h3> 선호 감독</h3>
-        {% for director, d_score in stats.directors %}
-            <p> {{ director }} {{ d_score }} </p>
-        {% endfor %}
-
-        <hr/>
-        
-        <h3> 선호 장르</h3>
-        {% for genre, g_score in stats.genres %}
-            <p> {{ genre }} {{ g_score }} </p>
-        {% endfor %}
-
-        <hr/>
-
-        <h3> 감상 시간 </h3> {{ stats.times.hour }}시간 {{ stats.times.minute }}분
-        
-    {% endif %}
-
-</body>
-</html>
+{% endblock main-content %}

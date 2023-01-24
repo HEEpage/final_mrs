@@ -63,7 +63,8 @@ class UserPageView(TemplateView) :
         logs = UserMovieLog.objects.filter(user_email__exact = self.request.user.email)
         if logs :
             context['stats'] = stats(logs)
-
+            context['username'] = User.objects.get(email = self.request.user.email).username
+        print(context)
         return context
 
 
