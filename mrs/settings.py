@@ -141,7 +141,7 @@ AUTH_USER_MODEL = 'users.User'
 # EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 # 로그인 성공후 이동하는 URL
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/#main'
 
 # 로그아웃 후 이동하는 URL
 LOGOUT_REDIRECT_URL = '/'
