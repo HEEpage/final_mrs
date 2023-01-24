@@ -17,4 +17,9 @@ urlpatterns = [
     path('accounts/wish/', views.UserWishAPI.as_view(), name='wishlist'),
     path('accounts/wish/<int:no>', views.UserWishDetailAPI.as_view(), name='wish_detail'),
 
+    # 기연 - api 추가
+    path('accounts/', views.UserAPI.as_view(), name='user_info'),
+    path('accounts/wish/status', views.UserWishStatusAPI.as_view(), name = 'wish_status'),
+    path('accounts/review/status', views.UserReviewStatusAPI.as_view(), name = 'review_status'),
+
 ]
