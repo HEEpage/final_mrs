@@ -1,0 +1,141 @@
+{% extends 'partials/base.html' %}
+{% block main-content %}
+
+    <!-- LOADER -->
+    <div id="preloader">
+        <img class="preloader" src="static/images/loader.gif" alt="">
+    </div><!-- end loader -->
+    <!-- END LOADER -->
+
+    <div id="wrapper">
+        <!-- BEGIN # MODAL LOGIN -->
+        <div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <!-- Begin # DIV Form -->
+                    <div id="div-forms">
+                        <form id="login-form">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span class="flaticon-add" aria-hidden="true"></span>
+                            </button>
+                            <div class="modal-body">
+                                <input class="form-control" type="text" placeholder="What you are looking for?" required>
+                            </div>
+                        </form><!-- End # Login Form -->
+                    </div><!-- End # DIV Form -->
+                </div>
+            </div>
+        </div>
+        <!-- END # MODAL LOGIN -->
+
+        <header class="header">
+            <div class="container">
+                {% include 'partials/navbar.html' %}
+            </div><!-- end container -->
+        </header>
+
+        
+        <section id="home" class="video-section js-height-full">
+            <div class="overlay"></div>
+            <div class="home-text-wrapper relative container">
+                
+                <div class="home-message">
+                    <p>Movie Recommend System</p>
+                    <small> 상영작과 OTT 서비스를 한 번에! 손쉽게 영화를 선택하세요 :) </small>
+                    {% if not user.is_authenticated %}
+                    <div class="btn-wrapper">
+                        <div class="text-center">
+                            <a href="{% url 'users:login' %}" class="btn btn-primary wow slideInLeft" > Sign in </a> &nbsp;&nbsp;&nbsp;
+                            <a href="#" class="btn btn-default wow slideInRight"> Sign up </a>
+                        </div>
+                    </div><!-- end row -->
+                    {% endif %}
+                </div>
+                
+            </div>
+            <div class="slider-bottom">
+                <span> 시작하기
+                    <a href="#main"><i class="fa fa-angle-down"></i></a>
+                </span>
+            </div>
+        </section>
+       
+
+        <div id="main">
+            <section class="section gb">
+                <div class="container">
+                    <div class="section-title text-center">
+                        <h3> BoxOffice Top Rank </h3>
+                    </div><!-- end title -->
+                    <div id="owl-01" class="owl-carousel owl-theme owl-theme-01">
+                        {% for box in box_list %}
+                            <div class="caro-item">
+                                <div class="course-box">
+                                    <div class="image-wrap entry">
+                                        <img src="{{ box.movie_id.poster }}" alt="" class="img-responsive">
+                                        <div class="magnifier">
+                                            <a href="{% url 'movies:detail' box.movie_id.id %}" title=""><i class="flaticon-add"></i></a>
+                                        </div>
+                                    </div><!-- end image-wrap -->
+                                </div><!-- end box -->
+                            </div><!-- end col -->
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+            
+            <section class="section">
+                <div class="container">
+                    <div class="section-title text-center">
+                        <h3> Upcomming Top Rank </h3>
+                    </div><!-- end title -->
+                    <div id="owl-02" class="owl-carousel owl-theme owl-theme-01">
+                        {% for upcom in up_list %}
+                            <div class="caro-item">
+                                <div class="course-box">
+                                    <div class="image-wrap entry">
+                                        <img src="{{ upcom.movie_id.poster }}" alt="" class="img-responsive">
+                                        <div class="magnifier">
+                                            <a href="{% url 'movies:detail' upcom.movie_id.id %}" title=""><i class="flaticon-add"></i></a>
+                                        </div>
+                                    </div><!-- end image-wrap -->
+                                </div><!-- end box -->
+                            </div><!-- end col -->
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+            <section class="section db">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-4 col-md-4">
+                            <div class="stat-count">
+                                <h4 class="stat-timer">1634</h4>
+                                <h3><i class="flaticon-black-graduation-cap-tool-of-university-student-for-head"></i> Happy Students</h3>
+                                <p>Quisque porttitor eros quis leo pulvinar, at hendrerit sapien iaculis. </p>
+                            </div><!-- stat-count -->
+                        </div><!-- end col -->
+                        <div class="col-lg-4 col-md-4">
+                            <div class="stat-count">
+                                <h4 class="stat-timer">331</h4>
+                                <h3><i class="flaticon-online-course"></i> Course Done</h3>
+                                <p>Quisque porttitor eros quis leo pulvinar, at hendrerit sapien iaculis. </p>
+                            </div><!-- stat-count -->
+                        </div><!-- end col -->
+                        <div class="col-lg-4 col-md-4">
+                            <div class="stat-count">
+                                <h4 class="stat-timer">8901</h4>
+                                <h3><i class="flaticon-coffee-cup"></i> Ordered Coffe's</h3>
+                                <p>Quisque porttitor eros quis leo pulvinar, at hendrerit sapien iaculis. </p>
+                            </div><!-- stat-count -->
+                        </div><!-- end col -->
+                    </div><!-- end row -->
+                </div><!-- end container -->
+            </section>
+        </div>
+
+
+    
+    </div><!-- end wrapper -->
+
+{% endblock main-content %}

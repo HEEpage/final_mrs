@@ -1,20 +1,140 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movie Log</title>
-</head>
-<body>
-    
-    <h1> Movie Log TEST</h1>
+{% extends 'partials/base.html' %}
 
-    {% for mv in usermoviewish_list %}
-        <p> {{ mv }} <a href="{% url 'users:user_wish_delete' mv.no %}"> X </a>   </p>
-    {% endfor %}
-    
-    <!-- <a href="{% url 'users:user_mvlog_add' %}"> 추가등록 </a> -->
+{% block styles %}
+<link rel="stylesheet" href="/static/my_style.css">
+{% endblock styles %}
 
-</body>
-</html>
+{% block main-content %}
+<!-- LOADER -->
+<div id="preloader">
+    <img class="preloader" src="/static/images/loader.gif" alt="">
+</div><!-- end loader -->
+<!-- END LOADER -->
+
+<div id="wrapper">
+    <header class="header header-normal">
+        <div class="container">
+            {% include 'partials/navbar.html' %}
+        </div><!-- end container -->
+    </header>
+
+    <section class="section db p120">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="tagline-message page-title text-center">
+                        <h3>나의 위시리스트</h3>
+                        <ul class="breadcrumb">
+                            <li><a href="javascript:void(0)">My Page</a></li>
+                            <li class="active">Wish</li>
+                        </ul>
+                    </div>
+                </div><!-- end col -->
+            </div><!-- end row -->
+        </div><!-- end container -->
+    </section><!-- end section -->
+
+    <section id="data-area" class="section gb nopadtop">
+        <div class="container">
+            <div class="boxed">
+                <div class="shop-top">
+                    <div class="clearfix">
+                        <div class="pull-left">
+                            <p> Showing 1–9 of [[ usermoviewish_list.length ]] results</p>
+                        </div>
+                        <div class="pull-right">
+                        <select class="selectpicker">
+                            <option>최신순</option>
+                            <option>평점순</option>
+                        </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="content blog-list">
+                        <div class="content boxed-comment clearfix">
+                            <div class="comments-list">
+                                <div class="media" v-for="wish in usermoviewish_list">
+                                    <p class="pull-right"><small>5 days ago</small></p>
+                                    <a class="media-left" :href="`/movies/detail/${wish.movie_id.id}/`">
+                                        <img :src="[[ wish.movie_id.poster ]]" alt="영화포스터" class="img-responsive">
+                                    </a>
+                                    <div class="media-body">
+                                        <h4 class="media-heading user_name">[[ wish.movie_id.title ]]</h4>
+                                        <p>평점 : [[ wish.movie_id.avg_grade ]] / 개봉일 : [[ wish.movie_id.release_date ]]</p>
+                                        <div class="text-right">
+                                            <a v-on:click="delWishList(wish.no)" class="btn btn-primary btn-sm">삭제</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                 
+                            </div>
+                        </div><!-- end content -->
+                    </div><!-- end row -->
+                </div><!-- end boxed -->
+            </div><!-- end container -->
+    </section>
+
+</div><!-- end wrapper -->
+
+
+{% endblock main-content %}
+
+{% block scripts %}
+<script>
+    axios.defaults.xsrfCookieName = 'csrftoken';
+    axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN';
+
+    const WishListApp = {
+        delimiters: ['[[', ']]'],
+
+        data() {
+            return {
+                usermoviewish_list: [],
+            }
+        },
+
+        created() {
+            console.log("데이터 가져오는 중........");
+            this.getWishList();
+        },
+
+        methods: {
+
+            // movie_list
+            getWishList() {
+                console.log("getWishList().........");
+
+                axios.get(`http://127.0.0.1:8000/api/accounts/wish/`)
+                    .then(res => {
+                        console.log("getWishList GET RES", res);
+                        this.usermoviewish_list = res.data;
+                        console.log(this.usermoviewish_list)
+                    })
+                    .catch(err => {
+                        console.log("FETCH MOVIEDETAIL GET ERR.RESPONSE", err.response);
+                        console.log("FETCH MOVIEDETAIL GET ERR.RESPONSE", err.response);
+                        alert(`${err.response.status} ${err.response.statusText}`);
+                    });
+
+            },
+
+            delWishList(no) {
+                console.log("delWishList().............", no)
+                
+                axios.delete(`http://127.0.0.1:8000/api/accounts/wish/${no}`)
+                    .then(res => {
+                        this.getWishList();
+                    })
+                    .catch(err => {
+                        console.log("delWishList DEL ERR.RESPONSE", err.response);
+                        alert(`${err.response.status} ${err.response.statusText}`);
+                    });
+            }
+        },
+    }
+    Vue.createApp(WishListApp).mount('#data-area')
+</script>
+
+{% endblock scripts %}

@@ -1,0 +1,29 @@
+<nav class="navbar navbar-default yamm">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <div class="logo-normal">
+            <a class="navbar-brand" href="/"><img src="/static/images/logo.png" alt=""></a>
+        </div>
+    </div>
+
+    <div id="navbar" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav navbar-right">
+            <li><a href="/">Home</a></li>
+            <li class="dropdown hassubmenu">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">My Page <span class="fa fa-angle-down"></span></a>
+                <ul class="dropdown-menu" role="menu">
+                    <li><a href="{% url 'users:user_page' %}">마이 페이지</a></li>
+                    <li><a href="{% url 'users:user_mvlog' %}">나의 영화 기록</a></li>
+                </ul>
+            </li>
+            <li><a href="{% url 'users:logout' %}">LOGOUT</a></li>
+            <li class="iconitem"><a href="#" data-toggle="modal" data-target="#login-modal"><i class="fa fa-search"></i></a></li>
+            <li class="iconitem"><a class="shopicon" href="shop-cart.html"><i class="fa fa-shopping-basket"></i> &nbsp;(0)</a></li>
+        </ul>
+    </div>
+</nav><!-- end navbar -->
