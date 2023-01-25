@@ -7,23 +7,74 @@
             <span class="icon-bar"></span>
         </button>
         <div class="logo-normal">
-            <a class="navbar-brand" href="/"><img src="/static/images/logo.png" alt=""></a>
+            <a class="navbar-brand" href="/">
+                <h1 style="color: white;"> MRS </h1>
+            </a>
         </div>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
         <ul class="nav navbar-nav navbar-right">
             <li><a href="/">Home</a></li>
-            <li class="dropdown hassubmenu">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">My Page <span class="fa fa-angle-down"></span></a>
-                <ul class="dropdown-menu" role="menu">
-                    <li><a href="{% url 'users:user_page' %}">마이 페이지</a></li>
-                    <li><a href="{% url 'users:user_mvlog' %}">나의 영화 기록</a></li>
+            <li class="dropdown yamm-fw yamm-half"><a href="#" data-toggle="dropdown" class="dropdown-toggle active"> Genre <b class="fa fa-angle-down"></b></a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <div class="yamm-content clearfix">
+                            <div class="row-fluid">
+                                <h4> 장르 선택 </h4>
+                                <div class="col-md-6 col-sm-6">
+                                    <ul>
+                                        {% for genre in genre_type1 %}
+                                        <li><a href="{% url 'movies:all_genre' genre.no %}"> {{ genre.type }} </a></li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                <div class="col-md-6 col-sm-6">
+                                    <ul>
+                                        {% for genre in genre_type2 %}
+                                        <li><a href="{% url 'movies:all_genre' genre.no %}"> {{ genre.type }} </a></li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
                 </ul>
             </li>
-            <li><a href="{% url 'users:logout' %}">LOGOUT</a></li>
+            {% if user.is_authenticated %}
+                <li class="dropdown hassubmenu">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">My Page <span class="fa fa-angle-down"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="{% url 'users:user_page' %}">마이 페이지</a></li>
+                        <li><a href="{% url 'users:user_mvlog' %}">나의 영화 기록</a></li>
+                    </ul>
+                </li>
+                <li><a href="{% url 'users:logout' %}">LOGOUT</a></li>
+            {% else %}
+                <li><a href="{% url 'users:login' %}">Sign in</a></li>
+                <li><a href="{% url 'users:register' %}">Sign up</a></li>
+                {% endif %}
             <li class="iconitem"><a href="#" data-toggle="modal" data-target="#login-modal"><i class="fa fa-search"></i></a></li>
-            <li class="iconitem"><a class="shopicon" href="shop-cart.html"><i class="fa fa-shopping-basket"></i> &nbsp;(0)</a></li>
         </ul>
     </div>
 </nav><!-- end navbar -->
+
+<!-- BEGIN # MODAL LOGIN -->
+<div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Begin # DIV Form -->
+            <div id="div-forms">
+                <form id="login-form">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span class="flaticon-add" aria-hidden="true"></span>
+                    </button>
+                    <div class="modal-body">
+                        <input class="form-control" type="text" placeholder="What you are looking for?" required>
+                    </div>
+                </form><!-- End # Login Form -->
+            </div><!-- End # DIV Form -->
+        </div>
+    </div>
+</div>
+<!-- END # MODAL LOGIN -->

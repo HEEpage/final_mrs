@@ -8,25 +8,26 @@
     <!-- END LOADER -->
 
     <div id="wrapper">
-        <!-- BEGIN # MODAL LOGIN -->
+        <!-- BEGIN # MODAL -->
         <div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <!-- Begin # DIV Form -->
                     <div id="div-forms">
-                        <form id="login-form">
+                        <form id="login-form" method="GET" action="{% url 'movies:search' %}">
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span class="flaticon-add" aria-hidden="true"></span>
                             </button>
                             <div class="modal-body">
-                                <input class="form-control" type="text" placeholder="What you are looking for?" required>
+                                <input class="form-control" type="text" name="keyword"
+                                    placeholder="🔎 [제목, 감독, 출연진]으로 영화를 검색해보세요." required>
                             </div>
-                        </form><!-- End # Login Form -->
-                    </div><!-- End # DIV Form -->
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-        <!-- END # MODAL LOGIN -->
+        <!-- END # MODAL -->
 
         <header class="header">
             <div class="container">
@@ -46,7 +47,7 @@
                     <div class="btn-wrapper">
                         <div class="text-center">
                             <a href="{% url 'users:login' %}" class="btn btn-primary wow slideInLeft" > Sign in </a> &nbsp;&nbsp;&nbsp;
-                            <a href="#" class="btn btn-default wow slideInRight"> Sign up </a>
+                            <a href="{% url 'users:register' %}" class="btn btn-default wow slideInRight"> Sign up </a>
                         </div>
                     </div><!-- end row -->
                     {% endif %}
@@ -59,7 +60,7 @@
                 </span>
             </div>
         </section>
-       
+
 
         <div id="main">
             <section class="section gb">
@@ -111,22 +112,22 @@
                         <div class="col-lg-4 col-md-4">
                             <div class="stat-count">
                                 <h4 class="stat-timer">1634</h4>
-                                <h3><i class="flaticon-black-graduation-cap-tool-of-university-student-for-head"></i> Happy Students</h3>
-                                <p>Quisque porttitor eros quis leo pulvinar, at hendrerit sapien iaculis. </p>
+                                <h3><i class="flaticon-black-graduation-cap-tool-of-university-student-for-head"></i> Moives </h3>
+                                <p> 등록된 한국, 미국 영화 </p>
                             </div><!-- stat-count -->
                         </div><!-- end col -->
                         <div class="col-lg-4 col-md-4">
                             <div class="stat-count">
                                 <h4 class="stat-timer">331</h4>
-                                <h3><i class="flaticon-online-course"></i> Course Done</h3>
-                                <p>Quisque porttitor eros quis leo pulvinar, at hendrerit sapien iaculis. </p>
+                                <h3><i class="flaticon-online-course"></i> Users </h3>
+                                <p> 서비스를 이용 중인 사용자 </p>
                             </div><!-- stat-count -->
                         </div><!-- end col -->
                         <div class="col-lg-4 col-md-4">
                             <div class="stat-count">
                                 <h4 class="stat-timer">8901</h4>
-                                <h3><i class="flaticon-coffee-cup"></i> Ordered Coffe's</h3>
-                                <p>Quisque porttitor eros quis leo pulvinar, at hendrerit sapien iaculis. </p>
+                                <h3><i class="flaticon-coffee-cup"></i> Reviews </h3>
+                                <p> 사용자들이 기록한 리뷰 </p>
                             </div><!-- stat-count -->
                         </div><!-- end col -->
                     </div><!-- end row -->

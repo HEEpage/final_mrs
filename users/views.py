@@ -4,22 +4,49 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.contrib.auth import update_session_auth_hash
 
-from django.views.generic import CreateView, TemplateView, ListView
+from django.views.generic import CreateView, TemplateView, ListView, FormView
 
 # from django.contrib.auth.forms import PasswordChangeForm
-from .forms import CreateUserForm, ChangeUserForm
-from .models import Movie, User, UserMovieLog, UserMovieWish
-from .my_page import stats
+from users.forms import CreateUserForm, ChangeUserForm
+from users.models import User, UserMovieLog, UserMovieWish
+from users.my_page import stats
+from movies.models import Movie, MovieGenre
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 
 # 회원가입 view
-class UserCreateView(CreateView) :
+class UserCreateView(FormView) :
     form_class = CreateUserForm
     template_name = "users/register.html"
     success_url = reverse_lazy("home")
 
+    # -------------------- 추가 -------------------
+    def get_context_data(self, **kwargs) :
+        context = super().get_context_data(**kwargs)
+        context['genre_list'] = MovieGenre.objects.all()
+        return context
+
+    def post(self, request, *args, **kwargs) :
+        form = CreateUserForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            return render(request, "users/login.html", {'message' : "회원가입 성공 :)"})
+        
+        else :
+            context = {
+                'form' : CreateUserForm(),
+                'message' : "회원가입 실패! 모두 필수 항목입니다. 올바르게 다시 작성해주세요.",
+                'genre_list' : MovieGenre.objects.all(),
+            }
+            return render(request, "users/register.html", context)
+    
+
 
 # 회원 정보 수정 view
+@login_required(login_url='/accounts/login')
 def update(request) :
 
     if request.method == "POST" :
@@ -27,29 +54,17 @@ def update(request) :
 
         if form.is_valid() :
             form.save()
-            return redirect('users:user_page')
+
+            return render(request, "users/user_page.html")
+
     else : 
         form = ChangeUserForm(instance = request.user)
         context = {'form' : form}
+        context['genre_list'] = MovieGenre.objects.all()
 
-    return render(request, 'users/update.html', context)
-
-
-# 비밀번호 수정 view
-# def password(request) :
-
-#     if request.method == "POST" :
-#         form = PasswordChangeForm(request.POST, instance = request.user)
-
-#         if form.is_valid() :
-#             form.save()
-#             update_session_auth_hash(request, form.user)
-
-#     else : 
-#         form = PasswordChangeForm()
-#         context = {'form' : form}
-
-#     return render(request, 'users/update.html', context)
+        return render(request, "users/update.html", context)
+    
+    # -------------------- 끝 -------------------
 
 
 # 마이페이지 view
@@ -147,3 +162,35 @@ def user_wish_delete_view(request, no) :
     wish.delete()
 
     return redirect('/accounts/wish/')
+
+
+# ------------------ 추가 -----------------------
+# email 중복 체크
+@csrf_exempt
+def checked_email(request) :
+    email = request.POST.get('email', '')
+
+    try :
+        user = User.objects.get(email = email)
+    except Exception as e :
+        user = None
+
+    return JsonResponse({
+        'result' : 'not exist' if user is None else 'exist',
+    })
+
+
+# username 중복 체크
+@csrf_exempt
+def checked_username(request) :
+    name = request.POST.get('username', '')
+
+    try :
+        user = User.objects.get(username = name)
+    except Exception as e :
+        user = None
+
+    return JsonResponse({
+        'result' : 'not exist' if user is None else 'exist',
+    })
+# ------------------ 끝 -----------------------

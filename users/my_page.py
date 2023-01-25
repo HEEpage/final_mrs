@@ -106,7 +106,7 @@ def get_genres(logs) :
 
 # 감상 시간
 def get_times(logs) :
-    total = sum([ log.movie_id.running_time for log in logs if log.movie_id.running_time != None])
+    total = sum([ log.movie_id.running_time for log in logs if log.movie_id.running_time != ""])
     hour = total // 60
     minute = total % 60
 
