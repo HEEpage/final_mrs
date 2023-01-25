@@ -24,4 +24,9 @@ urlpatterns = [
     path("wish/", views.UserWishView.as_view(), name = "user_wish"), # 위시리스트
     path("wish/delete/<int:no>", views.user_wish_delete_view, name = "user_wish_delete"), # 위시리스트 삭제
 
+    # ------------------------ 추가 ---------------------------
+    path("check-email/", views.checked_email, name = "check_email"), # email 중복 체크
+    path("check-name/", views.checked_username, name = "check_name"), # username 중복 체크
+    # ------------------------ 끝 ---------------------------
+
 ]

@@ -1,118 +1,120 @@
-{% extends "movies/base.html" %}
-{% block content %}
-    <div>
-        <form method="post" id="genre_show" action="" class="form" style="margin-left: 7%; margin-top: 5%;">
-            {% csrf_token %}
-            <!-- <select name="genre_num" id="genre_num">
-                {% for gt in genre_type %}
-                    <option value="{{ forloop.counter }}">{{ gt }}</option>
-                {% endfor %}
-            </select> -->
-            {% for gt in genre_type %}
-            <input name="genre_num" type="radio" value="{{ forloop.counter }}">{{ gt }}
-            <br>
-            {% endfor %}
-            <hr>
-            <!-- <select name="sort_num" id="sort_num">
-                <option value="None">정렬</option>
-                <option value="1">인기순</option>
-                <option value="2">최신순</option>
-            </select> -->
-            <input name="sort_num" type="radio" value="1">인기순
-            <br>
-            <input name="sort_num" type="radio" value="2">최신순
-            <br>
-            <button name="gen_list" type="submit">filter</button>
-        </form>
-        <hr>
-        <form action="." method="get">
-            <div class="row" style="margin-bottom:15px;">
-                <div class="col-lg-5">
-                    <div class="input-group">
-                        <input type="text" class="form-control" name="search_key" value="{{ search_key }}"
-                            placeholder="">
-                        <span class="input-group-btn">
-                            <input class="btn btn-default" type="submit" value="Search">
-                        </span>
-                    </div><!-- /input-group -->
-                </div><!-- /.col-lg-6 -->
-            </div><!-- /.row -->
-        </form>
-    </div>
-    <div>
+{% extends 'partials/base.html' %}
+
+{% block styles %}
+<!-- <link rel="stylesheet" href="/static/css/prettyPhoto.css"> -->
+<link rel="stylesheet" href="/static/my_style.css">
+{% endblock styles %}
+
+
+{% block main-content %}
+
+<header class="header header-normal">
+    <div class="container">
+        {% include 'partials/navbar.html' %}
+    </div><!-- end container -->
+</header>
+
+<section class="section lb p120">
+    <div class="container">
         <div class="row">
-            <div id="video_list_search" class="col-md-12">
-            {% if search_list %}
-                {% for search in search_list %}
-                <h2><a href="{% url 'movies:detail' search.id %}">{{ search.title }}</a></h2>
-                <p>{{ search.director }}</p>
-                <p>{{ gen.genre }}</p>
-                <p>{{ search.cast }}</p>
-                {% endfor %}
-            {% endif %}
-            {% if box_list.exists %}
-                {% for box in box_list %}
-                <h2><a href="{% url 'movies:detail' box.id %}">{{ box.no }}</a></h2>
-                <p>{{ box.movie_id }}</p>
-                {% endfor %}
-            {% endif %}
-            {% if up_list.exists %}
-                {% for up in up_list %}
-                <h2><a href="{% url 'movies:detail' up.id %}">{{ up.no }}</a></h2>
-                <p>{{ up.movie_id }}</p>
-                {% endfor %}
-            {% endif %}
-            {% if gen_list.exists %}
-                {% for gen in gen_list %}
-                <h2><a href="{% url 'movies:detail' gen.id %}">{{ gen.title }}</a></h2>
-                <p>{{ gen.director }}</p>
-                <p>{{ gen.genre }}</p>
-                <p>{{ gen.cast }}</p>
-                <p>{{ gen.release_date }}</p>
-                {% endfor %}
-            {% endif %}
+            <div class="col-md-12">
+                <div class="tagline-message page-title text-center">
+                    <h3> {{ genre.type }} </h3>
+                    <ul class="breadcrumb">
+                        <li><a href="javascript:void(0)">Home</a></li>
+                        <li class="active">Genre</li>
+                    </ul>
+                </div>
+            </div><!-- end col -->
+        </div><!-- end row -->
+    </div><!-- end container -->
+</section><!-- end section -->
+
+<section class="section gb nopadtop" id="data-area">
+    <div class="container">
+        <div class="boxed boxedp4">
+            <div class="shop-top">
+                <div class="clearfix">
+                    <div class="pull-left">
+                        <input type="hidden" class="genre_num" v-model="genre_num" value="{{ genre.no }}">
+                        <p> Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }} </p>
+                    </div>
+                    <div class="pull-right">
+                    <select class="selectpicker">
+                        <option> 평점순 </option>
+                        <option> 최신순 </option>
+                        <option> 제목 오름차순 </option>
+                        <option> 제목 내림차순 </option>
+                    </select>
+                    </div>
+                </div>
             </div>
+
+            <div class="row blog-grid shop-grid">
+                {% for movie in movie_list %}
+                <div class="col-md-3">
+                    <div class="course-box shop-wrapper">
+                        <div class="image-wrap entry">
+                            <img src="{{ movie.poster }}" alt="" class="img-responsive" style="height: 300px;">
+                            <div class="magnifier">
+                                <a href="{% url 'movies:detail' movie.id %}" title=""><i class="flaticon-add"></i></a>
+                            </div>
+                        </div>
+                        <!-- end image-wrap -->
+                        <div class="course-details shop-box text-center">
+                            <h4>
+                                <a href="'#'" title=""> {{ movie.title | truncatechars:13 }} </a>
+                                <small> {{ movie.release_date }} </small>
+                            </h4>
+                        </div>
+                        <!-- end details -->
+                        <div class="course-footer clearfix">
+                            <div class="pull-left">
+                                <ul class="list-inline">
+                                    <li><a href="#"><i class="fa fa-clock-o"></i> {{ movie.running_time }}분 </a></li>
+                                </ul>
+                            </div><!-- end left -->
+
+                            <div class="pull-right">
+                                <ul class="list-inline">
+                                    <li><a href="#"> <i class="fa fa-star" style="color: #82b440;"></i>{{ movie.avg_grade }} </a></li>
+                                </ul>
+                            </div><!-- end left -->
+                        </div><!-- end footer -->
+                    </div><!-- end box -->
+                </div><!-- end col -->
+                {% endfor %}
+
+            <hr class="invis">
+
+            <div class="row text-center">
+                <div class="col-md-12">
+                    <ul class="pagination">
+                        {% if page_obj.has_previous %}
+                            <li><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+                        {% else %}
+                            <li class="disabled"><a href="#">&laquo;</a></li>
+                        {% endif %}
+
+                        {% for index in page_list %}
+                            {% if index == page_obj.number %}
+                                <li class="active"><a href="#">{{ index }}</a></li>
+                            {% else %}
+                                <li><a href="?page={{ index }}">{{ index }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                            <li><a href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+                        {% else %}
+                            <li class="disabled"><a href="#">&raquo;</a></li>
+                        {% endif %}
+                    </ul>
+
+                </div><!-- end col -->
+            </div><!-- end row -->
         </div>
-    </div>
-    <script>
-        $(document).ready(function() {
-            console.log("ready");
-            $("button[name=gen_list]").click(function(){
-                console.log("click");
-                genre_num = $('input[type=radio][name=genre_num]:checked').val();
+    </div><!-- end container -->
+</section>
 
-                console.log(genre_num);
-                // console.log(sort_num);
-                $("#genre_show").attr("action", "genre/" + `${$("input[type=radio][name=genre_num]:checked").val()}` + "/");
-                // $("#genre_show").setAttribute("action", "genre/" + `${$("input[type=radio][name=genre_num]:checked").val()}` + "/");
-
-                $("input[type=radio][name=genre_num][value='" + genre_num + "']").prop('checked', 'checked');
-                
-                if($('input[type=radio][name=sort_num]:checked').val() != null){
-                    sort_num = $('input[type=radio][name=sort_num]:checked').val();
-                    console.log("sort_num exist")
-                    $("#genre_show").attr("action", `${$("input[type=radio][name=sort_num]:checked").val()}` + "/");
-                }
-                $('#genre_show').submit();
-
-            });
-            // $("select[name=genre_num]").change(function(){
-
-            //     console.log($("select[name=genre_num]").val());
-            //     console.log("genre/" + `${$("select[name=genre_num]").val()}`);
-            //     genre_num = $('select[name=genre_num]').val();
-
-            //     $("#genre_show").attr("action", "genre/" + `${$("select[name=genre_num]").val()}` + "/");
-            //     $("#genre_show").submit();
-            // });
-            // $('select[name=sort_num]').change(function(){
-            //     console.log($('select[name=sort_num]').val());
-            //     console.log("genre/" + `${$('select[name=genre_num]').val()}` + "/" + `${$('select[name=sort_num]').val()}` + "/");
-            //     sort_num = $('select[name=sort_num]').val();
-            //     $("#genre_show").attr("action", `${$('select[name=sort_num]').val()}` + "/");
-            //     $('#genre_show').submit();
-            // });
-    }); 
-
-    </script>
-{% endblock %}
+{% endblock main-content %}

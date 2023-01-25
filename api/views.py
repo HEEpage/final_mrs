@@ -10,7 +10,6 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from django.http import Http404
 
 from api.serializers import MovieSerializers, MovieReviewSerializers, UserMoiveLogSerializers, UserMovieWishSerializers, UserSerializers
-from api.permission import IsOwnerOrReadOnly
 from movies.models import Movie, MovieGenre, MovieReviewDummy
 from users.models import UserMovieLog, UserMovieWish, User
 
@@ -108,11 +107,6 @@ class UserMovieLogAPI(APIView):
 
 # 사용자 영화 기록 목록 및 생성 - 마이페이지
 class UserLogAPI(APIView):
-    
-    # # authentication
-    # authentication_classes = [BasicAuthentication, SessionAuthentication]
-    # # permission
-    # permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
     # 사용자의 영화 기록 조회
     def get(self, request):
@@ -126,7 +120,7 @@ class UserLogAPI(APIView):
     # 영화 기록 작성
     def post(self, request):
 
-         # 중복이면 저장하지 않는다.
+        # 중복이면 저장하지 않는다.
         if UserMovieLog.objects.filter(user_email = request.data['user_email'], movie_id = request.data['movie_id']).count() == 1:
             return Response(request.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -142,11 +136,6 @@ class UserLogAPI(APIView):
 # 사용자 영화 특정 기록 조회, 수정, 삭제 - 마이페이지
 class UserLogDetailAPI(APIView):
 
-    # # authentication
-    # authentication_classes = [BasicAuthentication, SessionAuthentication]
-    # # permission
-    # permission_classes = [IsAuthenticatedOrReadOnly]
-    
     # 기록 객체 가져오기
     def get_object(self, no):
         try: return UserMovieLog.objects.get(no = no)
@@ -193,9 +182,9 @@ class UserWishAPI(APIView):
     # 위시리스트에 영화 등록
     def post(self, request):
 
-         # 중복이면 저장하지 않는다
+        # 중복이면 저장하지 않는다
         if UserMovieWish.objects.filter(user_email = request.data['user_email'], movie_id = request.data['movie_id']).count() == 1:
-             return Response(request.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(request.errors, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = UserMovieWishSerializers(data = request.data)
 
