@@ -10,4 +10,6 @@ urlpatterns = [
     path("detail/<int:movie_id>/", views.movieDetail, name="detail"),
     path("genre/<int:genre_num>/", views.MovieGenreList.as_view(), name="all_genre"),
 
+    path("genre/recom/", views.return_recom),
+
 ]

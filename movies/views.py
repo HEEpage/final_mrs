@@ -6,6 +6,7 @@ from django.views.generic import DetailView, ListView
 from movies.models import Movie, MovieBoxOffice, MovieUpcoming, MovieWatch, MovieReviewDummy, MovieGenre
 from users.models import User, UserMovieWish
 
+from movies.recommend_movie import recommendation
 
 # ------------------ 수정 ---------------------------------
 
@@ -111,3 +112,11 @@ def movieDetail(request, movie_id):
     }
     return render(request, "movies/movie_detail.html", context)
 
+def return_recom(request):
+    recomm_list = recommendation()
+    for i in range(len(recomm_list)) :
+        recomm_list[f'movie_{i}']['query'] = Movie.objects.filter(id__in = recomm_list[f'movie_{i}']['id'])
+    context = {
+        "recomm_list" : recomm_list,
+    }
+    return render(request, "movies/recommendation.html", context)
