@@ -3,67 +3,77 @@
 
     <!-- LOADER -->
     <div id="preloader">
-        <img class="preloader" src="static/images/loader.gif" alt="">
+        <img class="preloader" src="/static/images/loader.gif" alt="">
     </div><!-- end loader -->
     <!-- END LOADER -->
 
     <div id="wrapper">
-        <!-- BEGIN # MODAL -->
-        <div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <!-- Begin # DIV Form -->
-                    <div id="div-forms">
-                        <form id="login-form" method="GET" action="{% url 'movies:search' %}">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span class="flaticon-add" aria-hidden="true"></span>
-                            </button>
-                            <div class="modal-body">
-                                <input class="form-control" type="text" name="keyword"
-                                    placeholder="🔎 [제목, 감독, 출연진]으로 영화를 검색해보세요." required>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- END # MODAL -->
 
+        {% block navbar %}
         <header class="header">
             <div class="container">
                 {% include 'partials/navbar.html' %}
             </div><!-- end container -->
         </header>
+        {% endblock navbar %}
 
-        
         <section id="home" class="video-section js-height-full">
             <div class="overlay"></div>
             <div class="home-text-wrapper relative container">
                 
                 <div class="home-message">
+                    {% if not user.is_authenticated %}
                     <p>Movie Recommend System</p>
                     <small> 상영작과 OTT 서비스를 한 번에! 손쉽게 영화를 선택하세요 :) </small>
-                    {% if not user.is_authenticated %}
                     <div class="btn-wrapper">
                         <div class="text-center">
                             <a href="{% url 'users:login' %}" class="btn btn-primary wow slideInLeft" > Sign in </a> &nbsp;&nbsp;&nbsp;
                             <a href="{% url 'users:register' %}" class="btn btn-default wow slideInRight"> Sign up </a>
                         </div>
                     </div><!-- end row -->
+                    {% else %}
+                    <section class="section recom">
+                        <div class="container">
+                            <div class="section-title text-center">
+                                <h3 style="color: white;"> 당신의 취향을 저격할 영화 </h3>
+                            </div><!-- end title -->
+                            <div id="owl-01" class="owl-carousel owl-theme owl-theme-01">
+                                {% for test in test_lst %}
+                                    <div class="caro-item">
+                                        <div class="course-box">
+                                            <div class="image-wrap entry">
+                                                <img src="/static/imgs/{{test.id}}.png" alt="" class="img-responsive">
+                                                <div class="magnifier">
+                                                    <a href="{% url 'movies:detail' test.id %}" title=""><i class="flaticon-add"></i></a>
+                                                </div>
+                                            </div><!-- end image-wrap -->
+                                        </div><!-- end box -->
+                                    </div><!-- end col -->
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </section>
                     {% endif %}
                 </div>
-                
             </div>
+
             <div class="slider-bottom">
+                {% if not user.is_authenticated %}
                 <span> 시작하기
                     <a href="#main"><i class="fa fa-angle-down"></i></a>
                 </span>
+                {% else %}
+                <span> 더보기
+                    <a href="#main"><i class="fa fa-angle-down"></i></a>
+                </span>
+                {% endif %}
             </div>
+
         </section>
 
 
         <div id="main">
-            <section class="section gb">
+            <section class="section owl gb">
                 <div class="container">
                     <div class="section-title text-center">
                         <h3> BoxOffice Top Rank </h3>
@@ -73,7 +83,7 @@
                             <div class="caro-item">
                                 <div class="course-box">
                                     <div class="image-wrap entry">
-                                        <img src="{{ box.movie_id.poster }}" alt="" class="img-responsive">
+                                        <img src="/static/imgs/{{box.movie_id.id}}.png" alt="" class="img-responsive">
                                         <div class="magnifier">
                                             <a href="{% url 'movies:detail' box.movie_id.id %}" title=""><i class="flaticon-add"></i></a>
                                         </div>
@@ -85,17 +95,17 @@
                 </div>
             </section>
             
-            <section class="section">
+            <section class="section owl">
                 <div class="container">
                     <div class="section-title text-center">
                         <h3> Upcomming Top Rank </h3>
                     </div><!-- end title -->
-                    <div id="owl-02" class="owl-carousel owl-theme owl-theme-01">
+                    <div id="owl-01" class="owl-carousel owl-theme owl-theme-01">
                         {% for upcom in up_list %}
                             <div class="caro-item">
                                 <div class="course-box">
                                     <div class="image-wrap entry">
-                                        <img src="{{ upcom.movie_id.poster }}" alt="" class="img-responsive">
+                                        <img src="/static/imgs/{{upcom.movie_id.id}}.png" alt="" class="img-responsive">
                                         <div class="magnifier">
                                             <a href="{% url 'movies:detail' upcom.movie_id.id %}" title=""><i class="flaticon-add"></i></a>
                                         </div>
@@ -106,19 +116,44 @@
                     </div>
                 </div>
             </section>
+
+            {% for idx, mList in recomm_list.items %}
+            <section class="section owl">
+                <div class="container">
+                    <div class="section-title text-center">
+                        <h3> {{ mList.recom_title }} </h3>
+                    </div><!-- end title -->
+                    <div id="owl-01" class="owl-carousel owl-theme owl-theme-01">
+                        {% for movie in mList.query %}
+                            <div class="caro-item">
+                                <div class="course-box">
+                                    <div class="image-wrap entry">
+                                        <img src="/static/imgs/{{ movie.id }}.png" alt="" class="img-responsive">
+                                        <div class="magnifier">
+                                            <a href="{% url 'movies:detail' movie.id %}" title=""><i class="flaticon-add"></i></a>
+                                        </div>
+                                    </div><!-- end image-wrap -->
+                                </div><!-- end box -->
+                            </div><!-- end col -->
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+            {% endfor %}
+
             <section class="section db">
                 <div class="container">
                     <div class="row">
                         <div class="col-lg-4 col-md-4">
                             <div class="stat-count">
-                                <h4 class="stat-timer">1634</h4>
+                                <h4 class="stat-timer">1660</h4>
                                 <h3><i class="flaticon-black-graduation-cap-tool-of-university-student-for-head"></i> Moives </h3>
                                 <p> 등록된 한국, 미국 영화 </p>
                             </div><!-- stat-count -->
                         </div><!-- end col -->
                         <div class="col-lg-4 col-md-4">
                             <div class="stat-count">
-                                <h4 class="stat-timer">331</h4>
+                                <h4 class="stat-timer">489</h4>
                                 <h3><i class="flaticon-online-course"></i> Users </h3>
                                 <p> 서비스를 이용 중인 사용자 </p>
                             </div><!-- stat-count -->
@@ -134,9 +169,6 @@
                 </div><!-- end container -->
             </section>
         </div>
-
-
-    
     </div><!-- end wrapper -->
 
 {% endblock main-content %}

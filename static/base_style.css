@@ -154,8 +154,6 @@ a {
     padding-left: 0
 }
 
-.check li a {}
-
 .authorbox,
 blockquote {
     border: 0;
@@ -356,7 +354,7 @@ HEADER
     margin: -20px auto;
 }
 
-.modal-backdrop.in {
+.modal-backdrop.in{
     opacity: 1;
     background: url(images/pattern.png) repeat center center rgba(0, 0, 0, 1);
 }
@@ -439,8 +437,6 @@ MEGA MENU
 .yamm .container {
     position: relative;
 }
-
-.yamm .dropdown.yamm-fw .dropdown-menu {}
 
 .yamm .dropdown {
     position: relative;
@@ -947,7 +943,7 @@ SECTIONS
     overflow: hidden;
     position: relative;
     background-position: top center;
-    vertical-align: sub;
+    /* vertical-align: sub; */
     width: 100%;
     z-index: 2;
 }
@@ -2049,7 +2045,7 @@ MICS
 .loader {
     display: block;
     margin: 20px auto 0;
-    vertical-align: middle;
+    /* vertical-align: middle; */
 }
 
 #preloader {
@@ -2084,15 +2080,15 @@ MICS
 
 
 /******************************************
-COLOR BLUE
+COLOR
 ******************************************/
 
 .yamm .dropdown .dropdown-menu {
-    border-top-color: #01bacf;
+    border-top-color: #FFAC41;
 }
 
 .iconitem a.shopicon i {
-    color: #01bacf !important;
+    color: #FFAC41 !important;
 }
 
 .shop-desc small,
@@ -2166,12 +2162,12 @@ mark,
 
 
 /******************************************
-COLOR GREEN
+COLOR RED
 ******************************************/
 
 .menu-widget small,
 .course-footer .pull-right a {
-    color: #82b440;
+    color: #FF1E56;
 }
 
 .btn-default {
@@ -2328,4 +2324,20 @@ table, td, th {
     padding: 10px 0 20px;
     margin: 0;
 }
+
+.section.owl {
+    background-color: #ffffff;
+    padding: 4rem 0;
+    position: relative;
+    display: block;
+}
+
+.section.recom {
+    background-color: transparent;
+    padding: 0;
+    position: relative;
+    display: block;
+}
+
+
 

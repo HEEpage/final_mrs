@@ -6,9 +6,8 @@ from django.views.generic import DetailView, ListView
 from movies.models import Movie, MovieBoxOffice, MovieUpcoming, MovieWatch, MovieReviewDummy, MovieGenre
 from users.models import User, UserMovieWish
 
-from movies.recommend_movie import recommendation
+# from movies.recommend_movie import recommendation
 
-# ------------------ 수정 ---------------------------------
 
 # 영화 장르 필터링 및 정렬
 class MovieGenreList(ListView) :
@@ -30,6 +29,12 @@ class MovieGenreList(ListView) :
         paginator = page.paginator
         page_list = paginator.get_elided_page_range(page.number, on_each_side = 3, on_ends = 0)
         context["page_list"] = page_list
+
+        genre_list = MovieGenre.objects.all()
+        length = len(genre_list)//2 + 1
+
+        context["genre_type1"] = genre_list[:length]
+        context["genre_type2"] = genre_list[length:]
 
         return context
 
@@ -53,29 +58,13 @@ class MovieSearchList(ListView) :
                     Q(title__icontains= context['keyword'] ) | Q(director__icontains = context['keyword']) | Q(cast__icontains = context['keyword'])
                 ).distinct().count()
 
+        genre_list = MovieGenre.objects.all()
+        length = len(genre_list)//2 + 1
+
+        context["genre_type1"] = genre_list[:length]
+        context["genre_type2"] = genre_list[length:]
+
         return context
-
-# ------------------ 끝 ---------------------------------
-
-
-# 영화 현재 상영작 목록 보기
-def movieBoxOfficeList(request):
-    box_list = MovieBoxOffice.objects.all()
-    print(box_list)
-    context = {
-        "box_list": box_list
-    }
-    return render(request, "movies/movie_list.html", context)
-
-
-# 영화 개봉 예정작 목록 보기
-def movieUpcomingList(request):
-    up_list = MovieUpcoming.objects.all()
-    print(up_list)
-    context = {
-        "up_list": up_list
-    }
-    return render(request, "movies/movie_list.html", context)
 
 
 # 영화 상세 정보 보기
@@ -110,13 +99,24 @@ def movieDetail(request, movie_id):
         'movie_review': movie_review,
         'movie_watch': movie_watch,
     }
+
+    genre_list = MovieGenre.objects.all()
+    length = len(genre_list)//2 + 1
+
+    context["genre_type1"] = genre_list[:length]
+    context["genre_type2"] = genre_list[length:]
+
     return render(request, "movies/movie_detail.html", context)
 
-def return_recom(request):
-    recomm_list = recommendation()
-    for i in range(len(recomm_list)) :
-        recomm_list[f'movie_{i}']['query'] = Movie.objects.filter(id__in = recomm_list[f'movie_{i}']['id'])
-    context = {
-        "recomm_list" : recomm_list,
-    }
-    return render(request, "movies/recommendation.html", context)
+# def return_recom(request):
+    
+#     recomm_list = recommendation()
+
+#     for i in range(len(recomm_list)) :
+#         recomm_list[f'movie_{i}']['query'] = Movie.objects.filter(id__in = recomm_list[f'movie_{i}']['id'])
+    
+#     context = {
+#         "recomm_list" : recomm_list,
+#     }
+
+#     return render(request, "movies/recommendation.html", context)
