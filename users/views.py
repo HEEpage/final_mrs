@@ -22,10 +22,14 @@ class UserCreateView(FormView) :
     template_name = "users/register.html"
     success_url = reverse_lazy("home")
 
-    # -------------------- 추가 -------------------
     def get_context_data(self, **kwargs) :
         context = super().get_context_data(**kwargs)
         context['genre_list'] = MovieGenre.objects.all()
+
+        length = len(context['genre_list'])//2 + 1
+        context["genre_type1"] = context['genre_list'][:length]
+        context["genre_type2"] = context['genre_list'][length:]
+
         return context
 
     def post(self, request, *args, **kwargs) :
@@ -41,9 +45,9 @@ class UserCreateView(FormView) :
                 'message' : "회원가입 실패! 모두 필수 항목입니다. 올바르게 다시 작성해주세요.",
                 'genre_list' : MovieGenre.objects.all(),
             }
+
             return render(request, "users/register.html", context)
     
-
 
 # 회원 정보 수정 view
 @login_required(login_url='/accounts/login')
@@ -62,9 +66,13 @@ def update(request) :
         context = {'form' : form}
         context['genre_list'] = MovieGenre.objects.all()
 
+        genre_list = MovieGenre.objects.all()
+        length = len(genre_list)//2 + 1
+
+        context["genre_type1"] = genre_list[:length]
+        context["genre_type2"] = genre_list[length:]
+
         return render(request, "users/update.html", context)
-    
-    # -------------------- 끝 -------------------
 
 
 # 마이페이지 view
@@ -74,12 +82,18 @@ class UserPageView(TemplateView) :
 
     def get_context_data(self, **kwargs) :
         context = super().get_context_data(**kwargs)
+        context['username'] = User.objects.get(email = self.request.user.email).username
 
         logs = UserMovieLog.objects.filter(user_email__exact = self.request.user.email)
         if logs :
             context['stats'] = stats(logs)
-            context['username'] = User.objects.get(email = self.request.user.email).username
-        print(context)
+        
+        genre_list = MovieGenre.objects.all()
+        length = len(genre_list)//2 + 1
+
+        context["genre_type1"] = genre_list[:length]
+        context["genre_type2"] = genre_list[length:]
+
         return context
 
 
@@ -87,8 +101,18 @@ class UserPageView(TemplateView) :
 @login_required(login_url='/accounts/login')
 def user_mvlog_view(request) :
     mv_log_list = UserMovieLog.objects.filter(user_email__exact = request.user.email)
-    
-    return render(request, "users/user_mvlog.html", {'mv_log_list' : mv_log_list})
+
+    context = {
+        'mv_log_list' : mv_log_list
+    }
+
+    genre_list = MovieGenre.objects.all()
+    length = len(genre_list)//2 + 1
+
+    context["genre_type1"] = genre_list[:length]
+    context["genre_type2"] = genre_list[length:]
+
+    return render(request, "users/user_mvlog.html", context)
 
 
 # 영화 기록 - 조회 view
@@ -149,6 +173,18 @@ class UserWishView(ListView) :
     model = UserMovieWish
     template_name = "users/user_wish.html"
 
+    def get_context_data(self, **kwargs) :
+        context = super().get_context_data(**kwargs)
+
+        genre_list = MovieGenre.objects.all()
+        length = len(genre_list)//2 + 1
+
+        context["genre_type1"] = genre_list[:length]
+        context["genre_type2"] = genre_list[length:]
+
+        return context
+
+
     def get_queryset(self) :
         email =  self.request.user.email
 
@@ -164,7 +200,6 @@ def user_wish_delete_view(request, no) :
     return redirect('/accounts/wish/')
 
 
-# ------------------ 추가 -----------------------
 # email 중복 체크
 @csrf_exempt
 def checked_email(request) :
@@ -193,4 +228,3 @@ def checked_username(request) :
     return JsonResponse({
         'result' : 'not exist' if user is None else 'exist',
     })
-# ------------------ 끝 -----------------------
