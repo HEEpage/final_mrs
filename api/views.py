@@ -6,6 +6,8 @@ from rest_framework.generics import CreateAPIView
 from rest_framework import status, viewsets
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.pagination import PageNumberPagination
+from api.pagination import PaginationHandlerMixin
 
 from django.http import Http404
 
@@ -14,6 +16,10 @@ from movies.models import Movie, MovieGenre, MovieReviewDummy
 from users.models import UserMovieLog, UserMovieWish, User
 
 from urllib import parse
+
+# LogPagination
+class UserLogPagination(PageNumberPagination):
+    page_size = 5
 
 
 class MovieListAPI(APIView):
@@ -54,7 +60,6 @@ class MovieDetailAPI(APIView):
 
     def get(self, request):
         paramId = self.request.GET.get('code')
-        print(paramId)
 
         queryset = Movie.objects.get(id=paramId)
 
@@ -68,11 +73,10 @@ class ReviewDummyListAPI(APIView):
     
     def get(self, request):
         paramId = self.request.GET.get('code')
-        print(paramId)
 
-        queryset = MovieReviewDummy.objects.get(movie_id=paramId)
+        queryset = MovieReviewDummy.objects.filter(movie_id=paramId)
 
-        serializer = MovieReviewSerializers(queryset, many=False)
+        serializer = MovieReviewSerializers(queryset, many=True)
 
         return Response(serializer.data)
 
@@ -106,16 +110,30 @@ class UserMovieLogAPI(APIView):
 
 
 # 사용자 영화 기록 목록 및 생성 - 마이페이지
-class UserLogAPI(APIView):
+class UserLogAPI(APIView, PaginationHandlerMixin):
+    pagination_class = UserLogPagination
+    serializer_class = UserMoiveLogSerializers
 
     # 사용자의 영화 기록 조회
     def get(self, request):
+
         email = request.user.email
-        reviews = UserMovieLog.objects.filter(user_email__exact = email)
 
-        serializer = UserMoiveLogSerializers(reviews, many=True)
+        paramSort = self.request.GET.get('sort')
 
-        return Response(serializer.data)
+        if paramSort == "1" or paramSort == None :
+            reviews = UserMovieLog.objects.filter(user_email__exact = email).order_by('-c_date')
+        elif paramSort == "2":
+            reviews = UserMovieLog.objects.filter(user_email__exact = email).order_by('-grade')
+        
+        page = self.paginate_queryset(reviews)
+
+        if page is not None:
+            serializer = self.get_paginated_response(self.serializer_class(page, many=True).data)
+        else:
+            serializer = self.serializer_class(reviews, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
     # 영화 기록 작성
     def post(self, request):
@@ -146,7 +164,7 @@ class UserLogDetailAPI(APIView):
         review = self.get_object(no)
         serialiszer = UserMoiveLogSerializers(review, many=False)
 
-        return Response(serialiszer.data)
+        return Response(serialiszer.data, status=status.HTTP_200_OK)
 
     # 특정 기록 수정
     def put(self, request, no, format = None) :
@@ -177,7 +195,7 @@ class UserWishAPI(APIView):
 
         serializer = UserMovieWishSerializers(wish, many=True)
 
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
     # 위시리스트에 영화 등록
     def post(self, request):
@@ -208,7 +226,7 @@ class UserWishDetailAPI(APIView) :
         wish = self.get_object(no)
         serialiszer = UserMovieWishSerializers(wish, many=False)
 
-        return Response(serialiszer.data)
+        return Response(serialiszer.data, status=status.HTTP_200_OK)
 
     # 위시리스트의 특정 영화 삭제
     def delete(self, request, no, format = None) :
@@ -229,7 +247,7 @@ class UserAPI(APIView):
 
         serializer = UserSerializers(userInfo, many=False)
 
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 # User 평점 등록했는지 조회
@@ -243,7 +261,7 @@ class UserReviewStatusAPI(APIView):
 
         serializer = UserMoiveLogSerializers(review, many=False)
 
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 # User 위시 등록했는지 조회
@@ -257,4 +275,4 @@ class UserWishStatusAPI(APIView):
 
         serializer = UserMovieWishSerializers(wish, many=False)
 
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
