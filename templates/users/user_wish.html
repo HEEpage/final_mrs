@@ -12,11 +12,6 @@
 <!-- END LOADER -->
 
 <div id="wrapper">
-    <header class="header header-normal">
-        <div class="container">
-            {% include 'partials/navbar.html' %}
-        </div><!-- end container -->
-    </header>
 
     <section class="section db p120">
         <div class="container">
@@ -57,7 +52,7 @@
                                 <div class="media" v-for="wish in usermoviewish_list">
                                     <p class="pull-right"><small>5 days ago</small></p>
                                     <a class="media-left" :href="`/movies/detail/${wish.movie_id.id}/`">
-                                        <img :src="[[ wish.movie_id.poster ]]" alt="영화포스터" class="img-responsive">
+                                        <img :src="wish.movie_id.poster" alt="영화포스터" class="img-responsive">
                                     </a>
                                     <div class="media-body">
                                         <h4 class="media-heading user_name">[[ wish.movie_id.title ]]</h4>
@@ -110,10 +105,9 @@
                     .then(res => {
                         console.log("getWishList GET RES", res);
                         this.usermoviewish_list = res.data;
-                        console.log(this.usermoviewish_list)
+
                     })
                     .catch(err => {
-                        console.log("FETCH MOVIEDETAIL GET ERR.RESPONSE", err.response);
                         console.log("FETCH MOVIEDETAIL GET ERR.RESPONSE", err.response);
                         alert(`${err.response.status} ${err.response.statusText}`);
                     });

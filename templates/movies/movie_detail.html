@@ -17,12 +17,7 @@
 <div id="wrapper">
 
     <div id="data-area">
-        <header class="header header-normal">
-            <div class="container">
-                {% include 'partials/navbar.html' %}
-            </div><!-- end container -->
-        </header>
-        
+            
         <section class="section cb">
             <div class="container">
                 <div class="row">
@@ -193,7 +188,7 @@
                                 </div>
                                 <div id="menu1" class="tab-pane fade">
                                     
-                                    <div class="row" v-for="re in review">
+                                    <div class="row" v-for="re in reviewdummy">
                                         <div class="col-md-2 rating text-center">
                                             <div v-if="re.grade >= 9">
                                                 <i class="fa fa-star"></i>
@@ -251,21 +246,21 @@
                 </div><!-- end row -->
                 <div class="related-products">
                     <div class="text-widget">
-                        <h3>Related Products</h3>
+                        <h3>[[ movie.title ]]과 비슷한 영화</h3>
                     </div>
                     <div class="row blog-grid shop-grid">
                         <div class="col-md-3">
                             <div class="course-box shop-wrapper">
                                 <div class="image-wrap entry">
-                                    <img src="/static/upload/shop_01.jpg" alt="" class="img-responsive">
+                                    <img src="#" alt="" class="img-responsive">
                                     <div class="magnifier">
-                                        <a href="shop-single.html" title=""><i class="flaticon-add"></i></a>
+                                        <a href="#" title=""><i class="flaticon-add"></i></a>
                                     </div>
                                 </div>
                                 <!-- end image-wrap -->
                                 <div class="course-details shop-box text-center">
                                     <h4>
-                                        <a href="shop-single.html" title="">Brown leather bag</a>
+                                        <a href="#" title="">Brown leather bag</a>
                                     </h4>
                                 </div>
                             </div><!-- end footer -->
@@ -274,7 +269,7 @@
                 </div><!-- end related -->
             </div><!-- end container -->
         </section>
-        <!-- BEGIN # MODAL LOGIN -->
+        <!-- BEGIN # MODAL log -->
         <div class="modal fade" id="log-modal" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -375,6 +370,9 @@
                 wish_no : null,
                 wish_status: 0,
                 review_status: 0,
+
+                // genre_type1: [],
+                // genre_type2: [],
             }
         },
 
@@ -382,6 +380,7 @@
             console.log("데이터 가져오는 중........");
             const movieId = location.pathname.split('/')[3];
             this.getUser()
+            // this.getGenre()
             this.getMovieDetail(movieId)
             this.getMovieReview(movieId)
             this.getMovieReviewDummy(movieId)
@@ -411,7 +410,7 @@
 
                 axios.get(`http://127.0.0.1:8000/api/movies?code=${movieId}`)
                     .then(res => {
-                        console.log("MOVIEDETAIL GET RES", res);
+                        // console.log("MOVIEDETAIL GET RES", res);
                         this.movie = res.data
                     })
             },
@@ -421,7 +420,7 @@
 
                 axios.get(`http://127.0.0.1:8000/api/movies/review/?code=${movieId}`)
                     .then(res => {
-                        console.log("REVEIW GET RES", res);
+                        // console.log("REVEIW GET RES", res);
                         for (let data in res.data){
                             this.review.push(res.data[data]);
                         }
@@ -433,7 +432,7 @@
 
                 axios.get(`http://127.0.0.1:8000/api/movies/review/list?code=${movieId}`)
                     .then(res => {
-                        console.log("REVEIWDUMMY GET RES", res);
+                        // console.log("REVEIWDUMMY GET RES", res);
                         this.reviewdummy = res.data;
                         for (let data in res.data){
                             this.review.push(res.data[data]);
@@ -465,7 +464,7 @@
                 
                 axios.get(`http://127.0.0.1:8000/api/accounts/review/status?code=${movieId}`)
                     .then(res => {
-                        console.log("기록이 있네용", res.data)
+                        // console.log("기록이 있네용", res.data)
                         if (res.data.length != 0){
                             this.review_status = 1
                             this.star = res.data.grade
@@ -540,7 +539,7 @@
 
                 axios.post('/api/movies/review/', formdata)
                     .then(res => {
-                        console.log("CREATE-LOG POST RES", res);
+                        // console.log("CREATE-LOG POST RES", res);
                         this.review.push(res.data);
                     })
                     .catch(err => {
@@ -550,12 +549,28 @@
                 this.resetForm();
             },
 
+            // getGenre() {
+            //     console.log("장르 목록 가져오는 중...........")
+
+            //     axios.get(`http://127.0.0.1:8000/api/movies/genre/`)
+            //         .then(res => {
+            //             console.log(" 장르 잘 가져왔나요? ", res.data)
+            //             len = res.data.length / 2 + 1
+
+            //             this.genre_type1 = res.data.slice(0,len)
+            //             this.genre_type2 = res.data.slice(len,)
+
+            //             console.log(this.genre_type1)
+            //         })
+            //         .catch(err => {
+            //             console.log("GET ERR.RESPONSE", err.response);
+            //             alert(`${err.response.status} ${err.response.statusText}`);
+            //         });
+            // },
+
         },
     };
 
     Vue.createApp(MovieDetailApp).mount('#data-area')
-
-
-
 </script>
 {% endblock scripts %}
