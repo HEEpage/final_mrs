@@ -141,8 +141,13 @@ AUTH_USER_MODEL = 'users.User'
 # EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 # 로그인 성공후 이동하는 URL
-LOGIN_REDIRECT_URL = '/#main'
+LOGIN_REDIRECT_URL = '/'
 
 # 로그아웃 후 이동하는 URL
 LOGOUT_REDIRECT_URL = '/'
 
+# PAGINATION
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS' : 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE' : 5,
+}
