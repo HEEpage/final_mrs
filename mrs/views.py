@@ -3,7 +3,7 @@ from movies.models import MovieBoxOffice, MovieUpcoming, MovieGenre, Movie
 # from movies.recommend_movie_modify import recommendation
 import json, os, random
 
-from static.contents_based_algo.test import getRecomList
+from static.model.user_recom import getRecomList
 
 def home(request) :
 
@@ -37,6 +37,7 @@ def home(request) :
     test_lst = []
     if cur_user.is_authenticated:
         login_user = request.user.email
+
 
         test_lst = getRecomList(login_user)
         test_lst = Movie.objects.filter(id__in = test_lst)

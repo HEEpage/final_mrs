@@ -122,9 +122,6 @@ def find_movie( movie_info , genre_dummy , index ,top_n=20 ):
     genre_sim = cosine_similarity(genre_dummy , genre_dummy)
     sorted_genre_sim = genre_sim.argsort()[:,::-1]
     sim_idx = sorted_genre_sim[index, : top_n].reshape(-1)
-
-   
-
     return movie_info.iloc[sim_idx][["id",'title']].iloc[1:]['id'].values
     
 def prefer_movie_reco (  user , movie_info ):
@@ -147,10 +144,7 @@ def main(  user_info , input_user_log , movie_info ):
     try:
         movie_id = input_user_log.sort_values(by=['avg_grade'] , ascending= False   )["movie_id"].iloc[0]
         input_idx = movie_info.reset_index()[ movie_info["id"] == movie_id]['index'].values[0] 
-
-
         return find_movie( movie_info ,genre_dummy,  input_idx) 
-
 
     except : 
         # user = pd.DataFrame(user_info) 
