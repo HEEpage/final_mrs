@@ -6,6 +6,8 @@ from django.views.generic import DetailView, ListView
 from movies.models import Movie, MovieBoxOffice, MovieUpcoming, MovieWatch, MovieReviewDummy, MovieGenre
 from users.models import User, UserMovieWish
 
+from static.models.img_model.utils.evaluate import getImage
+
 # from movies.recommend_movie import recommendation
 
 
@@ -94,10 +96,14 @@ def movieDetail(request, movie_id):
                 }
                 UserMovieWish(**wish).save()
 
+    image_ids = getImage(movie_id)
+    sim_image = Movie.objects.filter(id__in = image_ids)
+
     context = {
         'movie_detail': movie_detail,
         'movie_review': movie_review,
         'movie_watch': movie_watch,
+        'sim_image': sim_image,
     }
 
     genre_list = MovieGenre.objects.all()

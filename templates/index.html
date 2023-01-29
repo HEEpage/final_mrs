@@ -38,13 +38,13 @@
                                 <h3 style="color: white;"> 당신의 취향을 저격할 영화 </h3>
                             </div><!-- end title -->
                             <div id="owl-01" class="owl-carousel owl-theme owl-theme-01">
-                                {% for test in test_lst %}
+                                {% for p in personal %}
                                     <div class="caro-item">
                                         <div class="course-box">
                                             <div class="image-wrap entry">
-                                                <img src="/static/imgs/{{test.id}}.png" alt="" class="img-responsive">
+                                                <img src="/static/imgs/{{p.id}}.png" alt="" class="img-responsive">
                                                 <div class="magnifier">
-                                                    <a href="{% url 'movies:detail' test.id %}" title=""><i class="flaticon-add"></i></a>
+                                                    <a href="{% url 'movies:detail' p.id %}" title=""><i class="flaticon-add"></i></a>
                                                 </div>
                                             </div><!-- end image-wrap -->
                                         </div><!-- end box -->
@@ -73,6 +73,30 @@
 
 
         <div id="main">
+            {% if user.is_authenticated and input_movie is not None %}
+            <section class="section owl gb">
+                <div class="container">
+                    <div class="section-title text-center">
+                        <h3> 내가 본 "{{ input_movie }}"과 포스터 분위기가 비슷한 </h3>
+                    </div><!-- end title -->
+                    <div id="owl-01" class="owl-carousel owl-theme owl-theme-01">
+                        {% for p_img in personal_img %}
+                            <div class="caro-item">
+                                <div class="course-box">
+                                    <div class="image-wrap entry">
+                                        <img src="/static/imgs/{{p_img.id}}.png" alt="" class="img-responsive">
+                                        <div class="magnifier">
+                                            <a href="{% url 'movies:detail' p_img.id %}" title=""><i class="flaticon-add"></i></a>
+                                        </div>
+                                    </div><!-- end image-wrap -->
+                                </div><!-- end box -->
+                            </div><!-- end col -->
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+            {% endif %}
+
             <section class="section owl gb">
                 <div class="container">
                     <div class="section-title text-center">
