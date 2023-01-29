@@ -74,7 +74,7 @@ def memory_main (  user_info , user_data , movie_data ):
         user_data["user_email"] = user_data["user_email"].apply(lambda x :id_dictionary[x] )
         user_data = user_data.rename(columns={'user_email':'userId',"movie_id":'movieId',"grade":"rating"})
         
-        user_info["email"] = user_data["email"].apply(lambda x :id_dictionary[x] )
+        user_info["email"] = user_info["email"].apply(lambda x :id_dictionary[x] )
         user_info = user_info.rename(columns={'email':'userId'})
         return user_info , user_data
         

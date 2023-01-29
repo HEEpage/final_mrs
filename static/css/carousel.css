@@ -23,3 +23,17 @@
     margin: 0 7px;
     padding: 6px 15px;
 }
+
+.owl-carousel {
+    position: relative;
+}
+
+.owl-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}

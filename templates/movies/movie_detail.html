@@ -1,7 +1,6 @@
 {% extends 'partials/base.html' %}
 
 {% block styles %}
-<link rel="stylesheet" href="/static/css/prettyPhoto.css">
 <link rel="stylesheet" href="/static/my_style.css">
 {% endblock styles %}
 
@@ -246,13 +245,14 @@
                 </div><!-- end row -->
                 <div class="related-products">
                     <div class="text-widget">
-                        <h3>[[ movie.title ]]과 비슷한 영화</h3>
+                        <h3>"[[ movie.title ]]"과 포스터가 비슷한 영화</h3>
                     </div>
                     <div class="row blog-grid shop-grid">
+                        {% for sim in sim_image %}
                         <div class="col-md-3">
                             <div class="course-box shop-wrapper">
                                 <div class="image-wrap entry">
-                                    <img src="#" alt="" class="img-responsive">
+                                    <img src="/static/imgs/{{sim.id}}.png" alt="" class="img-responsive">
                                     <div class="magnifier">
                                         <a href="#" title=""><i class="flaticon-add"></i></a>
                                     </div>
@@ -260,11 +260,12 @@
                                 <!-- end image-wrap -->
                                 <div class="course-details shop-box text-center">
                                     <h4>
-                                        <a href="#" title="">Brown leather bag</a>
+                                        <a href="#" title="">{{ sim.title }}</a>
                                     </h4>
                                 </div>
                             </div><!-- end footer -->
                         </div><!-- end box -->
+                        {% endfor %}
                     </div><!-- end col -->
                 </div><!-- end related -->
             </div><!-- end container -->

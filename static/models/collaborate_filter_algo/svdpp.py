@@ -11,6 +11,7 @@ from surprise import accuracy
 
 
 def recommendation(algo, user_id , user_data , movie_data, top_n = 100):
+
     def get_new_mv (user_id ,user_data, movie_data):
         watched_mv = user_data[user_data["userId"] == user_id ]["movieId"].tolist()
         total_mv = movie_data['id'].tolist()
@@ -39,18 +40,20 @@ def run(  user_info , user_data , movie_data ):
     
     def convert_id(user_info , user_data ):
         id_dictionary = {email : i for i,email in enumerate(user_data["user_email"].unique())}
+
         # 유저 이메일 id로 변환
         user_data["user_email"] = user_data["user_email"].apply(lambda x :id_dictionary[x] )
         user_data = user_data.rename(columns={'user_email':'userId',"movie_id":'movieId',"grade":"rating"})
         
-        user_info["email"] = user_data["email"].apply(lambda x :id_dictionary[x] )
+        user_info["email"] = user_info["email"].apply(lambda x :id_dictionary[x] )
         user_info = user_info.rename(columns={'email':'userId'})
+
         return user_info , user_data
         
     user_info , user_data = convert_id(user_info , user_data)
     reader = Reader(rating_scale=( user_data["rating"].min()   ,  user_data["rating"].max()    ))
 
-    user_id = user_info["userId"]
+    user_id = user_info["userId"][0]
 
     data = Dataset.load_from_df(user_data[['userId', 'movieId', 'rating']], reader=reader)
 
@@ -66,7 +69,7 @@ def run(  user_info , user_data , movie_data ):
     # # 파일 저장
     # joblib.dump(model, f'{PATH}DATA/l_crawl_svdplus_model.pkl')
 
-    model = joblib.load('l_crawl_svdplus_model.pkl')
+    model = joblib.load('C:/final_project/final_mrs/static/models/collaborate_filter_algo/l_crawl_svdplus_model.pkl')
     #validate the model
     pred = model.test(testset)
     # print("::: crawl  RMSE SVD++ results ::: ")

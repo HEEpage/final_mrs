@@ -3,7 +3,7 @@ from movies.models import MovieBoxOffice, MovieUpcoming, MovieGenre, Movie
 # from movies.recommend_movie_modify import recommendation
 import json, os, random
 
-from static.model.user_recom import getRecomList
+from static.models.user_recom import RecomList
 
 def home(request) :
 
@@ -34,19 +34,38 @@ def home(request) :
     # 개인화된 추천 목록 ----------------------------------------------------------------------------------
     cur_user = request.user
 
-    test_lst = []
+    input_movie = None
+    personal = []
+    personal_img = []
     if cur_user.is_authenticated:
         login_user = request.user.email
 
 
-        test_lst = getRecomList(login_user)
-        test_lst = Movie.objects.filter(id__in = test_lst)
-    
+        user = RecomList(login_user)
+
+        # content or collabo
+        personal = user.recomUserLogBased()
+        personal = Movie.objects.filter(id__in = personal)
+
+        # image
+        input_id, personal_img = user.recomImage()
+        if input_id is None:
+            input_movie = None
+            personal_img = []
+        else:
+            input_movie = Movie.objects.get(id = input_id).title
+            personal_img = Movie.objects.filter(id__in = personal_img)
+
+    # --------------------------------------------------------------------------------------------------
+
+
     context = {
         "up_list": up_list,
         "box_list": box_list,
         "recomm_list" : choice_dict,
-        "test_lst" : test_lst,
+        "personal" : personal,
+        "input_movie" : input_movie,
+        "personal_img": personal_img,
     }
 
     genre_list = MovieGenre.objects.all()
