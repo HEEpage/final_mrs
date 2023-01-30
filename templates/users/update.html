@@ -1,7 +1,6 @@
 {% extends 'partials/base.html' %}
 
 {% block styles %}
-<!-- <link rel="stylesheet" href="/static/css/prettyPhoto.css"> -->
 <link rel="stylesheet" href="/static/my_style.css">
 {% endblock styles %}
 
@@ -15,7 +14,7 @@
                 <div class="tagline-message page-title text-center">
                     <h3>📝 Update</h3>
                     <ul class="breadcrumb">
-                        <li><a href="javascript:void(0)">Edulogy</a></li>
+                        <li><a href="javascript:void(0)">User</a></li>
                         <li class="active">Update</li>
                     </ul>
                 </div>
@@ -40,6 +39,7 @@
 
                         <label for="email"> Email address : </label>
                         <input type="email" name="{{ form.email.name }}" id="email" class="form-control" value="{{ form.email.value }}" readonly>
+                        
                         <label for="password"> Password : </label>
                         <input type="button" name="{{ form.password.name }}" id="password" class="form-control" value="변경하기"> 
 
@@ -47,6 +47,7 @@
 
                         <label for="id_name"> Nickname : </label>
                         <input type="text" name="{{ form.username.name }}" id="username" class="form-control" value="{{ form.username.value }}" required>
+                        <p><small class="error_next_box" id="nameMsg" name="nameMsg" aria-live="assertive" style="color: crimson;"></small></p>
 
                         <p>
                             <label for="id_name"> Gender : </label> &nbsp;
@@ -76,12 +77,14 @@
                                 {% endif %}
                             {% endfor %}
                         </div>
+                        <p><small class="error_next_box" id="genreMsg" name="genreMsg" aria-live="assertive" style="color: crimson;"></small></p>
                         <input type="hidden" name="{{ form.preference_genre.name }}" id="preference_genre">
 
                         <br>
-
-                        <button type="button" class="btn btn-default" onclick="location.href='{% url 'home' %}'">Cancel</button>
-                        <button type="button" class="btn btn-primary" onclick="memberUpdate()">Submit</button>
+                        <div class="text-center">
+                            <button type="button" class="btn btn-default" onclick="location.href='{% url 'home' %}'">Cancel</button>
+                            <button type="button" class="btn btn-primary" onclick="memberUpdate()">Submit</button>
+                        </div>
                     </form>
                 </div><!-- end col -->
             </div><!-- end row -->

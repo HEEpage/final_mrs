@@ -186,7 +186,6 @@
                                     <p>{{ movie_detail.synopsis | linebreaksbr }}</p>
                                 </div>
                                 <div id="menu1" class="tab-pane fade">
-                                    
                                     <div class="row" v-for="re in reviewdummy">
                                         <div class="col-md-2 rating text-center">
                                             <div v-if="re.grade >= 9">
@@ -234,10 +233,10 @@
                                             <p>[[ re.review ]]</p>
                                         </div>
                                         <div class="col-md-2 text-center">
-                                            <p>[[ re.c_date ]]</p>
+                                            <p>[[ formatdate(re.c_date) ]]</p>
                                         </div>
+                                        <hr>
                                     </div>
-                                    <hr>
                                 </div>
                             </div>
                         </div><!-- end shop-extra -->
@@ -548,6 +547,10 @@
                         alert(`${err.response.status} ${err.response.statusText}`);
                     });
                 this.resetForm();
+            },
+
+            formatdate(value) {
+                return value.substring(0,10)
             },
 
             // getGenre() {

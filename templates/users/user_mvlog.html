@@ -60,7 +60,7 @@
                                         <div class="media-body">
                                             <h4 class="media-heading user_name">[[ log.movie_id.title ]]</h4>
                                             <p>[[ log.review ]]</p>
-                                            <p>평점 : [[ log.grade ]] / 작성일자 : [[ log.c_date ]]</p>
+                                            <p>평점 : [[ log.grade ]] / 작성일자 : [[ formatdate(log.c_date) ]]</p>
                                             <div class="text-right">
                                                 <a data-toggle="modal" data-target="#log-modal" @click="fetchMV(log)" class="btn btn-primary btn-sm">기록 수정</a>
                                                 &nbsp;&nbsp;
@@ -454,7 +454,11 @@
 
                 let searchForm = document.querySelector("#search-form")
                 searchForm.style.display = "";
-            }
+            },
+
+            formatdate(value) {
+                return value.substring(0,10)
+            },
 
         },
     };

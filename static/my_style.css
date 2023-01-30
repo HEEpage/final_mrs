@@ -37,7 +37,7 @@ HEADER
 
 .modal-backdrop.in {
     opacity: 1;
-    background: url() repeat center center;
+    background: url() repeat center center black;
 }
 
 .close,
