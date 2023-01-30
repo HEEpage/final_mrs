@@ -122,9 +122,15 @@ USE_TZ = False
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
+# DEBUG = True (개발자 모드)
 STATIC_URL = 'static/'
 
 STATICFILES_DIRS = (BASE_DIR / 'static',)
+
+# DEBUG = False(배포 모드)일 때 아래와 같이 폴더명을 동일하게 설정한다.
+# STATIC_URL = 'static_/'
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static_') # ROOT 폴더명이 STATIC_URL과 동일한 폴더명이 되어야 한다.
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
