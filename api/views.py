@@ -18,11 +18,16 @@ from users.models import UserMovieLog, UserMovieWish, User
 from urllib import parse
 
 # LogPagination
+class MoviePagination(PageNumberPagination):
+    page_size = 12
+
+# LogPagination
 class UserLogPagination(PageNumberPagination):
     page_size = 5
 
-
-class MovieListAPI(APIView):
+class MovieListAPI(APIView, PaginationHandlerMixin):
+    pagination_class = MoviePagination
+    serializer_class = MovieSerializers
 
     def get(self, request):
         paramGenre = self.request.GET.get('genre')
@@ -40,19 +45,30 @@ class MovieListAPI(APIView):
             queryset = Movie.objects.filter(genre__contains=genre)
 
             if paramSort == "1":
-                queryset = Movie.objects.filter(genre__contains=genre).order_by('-cnt_click')
+                queryset = Movie.objects.filter(genre__contains=genre).order_by('-avg_grade')
             
             elif paramSort == "2":
                 queryset = Movie.objects.filter(genre__contains=genre).order_by('-release_date')
-        
+
+            elif paramSort == "3":
+                queryset = Movie.objects.filter(genre__contains=genre).order_by('-title')
+
+            elif paramSort == "4":
+                queryset = Movie.objects.filter(genre__contains=genre).order_by('title')
+
         elif paramTitle:
             queryset = Movie.objects.filter(title__contains=paramTitle)
         
         else:
             queryset = Movie.objects.all()
 
-        serializer = MovieSerializers(queryset, many=True)
-        
+        page = self.paginate_queryset(queryset)
+
+        if page is not None:
+            serializer = self.get_paginated_response(self.serializer_class(page, many=True).data)
+        else:
+            serializer = self.serializer_class(queryset, many=True)
+
         return Response(serializer.data)
 
 
