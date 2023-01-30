@@ -3283,6 +3283,9 @@
                 nav: true,
                 dots: false,
                 loop: true,
+				autoplay: true,
+				autoplayHoverPause: true,
+				autoplayTimeout: 3000,
                 responsive: {
                   0: {
                     items: 1
