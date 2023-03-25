@@ -1,0 +1,78 @@
+{% extends 'partials/base.html' %}
+
+{% block styles %}
+<link rel="stylesheet" href="/static/css/prettyPhoto.css">
+<link rel="stylesheet" href="/static/my_style.css">
+{% endblock styles %}
+
+{% block main-content %}
+
+<section class="section lb p120">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="tagline-message page-title text-center">
+                    <h3> "{{ keyword }}" 검색 결과 </h3>
+                    <ul class="breadcrumb">
+                        <li><a href="javascript:void(0)">Home</a></li>
+                        <li class="active">Search</li>
+                    </ul>
+                </div>
+            </div><!-- end col -->
+        </div><!-- end row -->
+    </div><!-- end container -->
+</section><!-- end section -->
+
+<section class="section gb nopadtop">
+    <div class="container">
+        <div class="boxed boxedp4">
+            <div class="shop-top">
+                <div class="clearfix">
+                    <div class="pull-left">
+                        <p> Showing {{ count }} results</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row blog-grid shop-grid">
+                {% for movie in movie_list %}
+                <div class="col-md-3">
+                    <div class="course-box shop-wrapper">
+                        <div class="image-wrap entry">
+                            <img src="{{ movie.poster }}" alt="" class="img-responsive" style="height: 300px;">
+                            <div class="magnifier">
+                                <a href="{% url 'movies:detail' movie.id %}" title=""><i class="flaticon-add"></i></a>
+                            </div>
+                        </div>
+                        <!-- end image-wrap -->
+                        <div class="course-details shop-box text-center">
+                            <h4>
+                                <a href="'#'" title=""> {{ movie.title | truncatechars:13 }} </a>
+                                <small> {{ movie.release_date }} </small>
+                            </h4>
+                        </div>
+                        <!-- end details -->
+                        <div class="course-footer clearfix">
+                            <div class="pull-left">
+                                <ul class="list-inline">
+                                    <li><a href="#"><i class="fa fa-clock-o"></i> {{ movie.running_time }}분 </a></li>
+                                </ul>
+                            </div><!-- end left -->
+
+                            <div class="pull-right">
+                                <ul class="list-inline">
+                                    <li><a href="#"> <i class="fa fa-star" style="color: #82b440;"></i>{{ movie.avg_grade }} </a></li>
+                                </ul>
+                            </div><!-- end left -->
+                        </div><!-- end footer -->
+                    </div><!-- end box -->
+                </div><!-- end col -->
+                {% endfor %}
+
+            <hr class="invis">
+            
+        </div>
+    </div><!-- end container -->
+</section>
+
+{% endblock main-content %}

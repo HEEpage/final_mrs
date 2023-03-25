@@ -131,3 +131,5 @@ dmypy.json
 # Team add
 bs4_info.py
 migrations/
+static/imgs/
+static/user_data/

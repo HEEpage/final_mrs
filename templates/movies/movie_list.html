@@ -1,0 +1,220 @@
+{% extends 'partials/base.html' %}
+
+{% block styles %}
+<!-- <link rel="stylesheet" href="/static/css/prettyPhoto.css"> -->
+<link rel="stylesheet" href="/static/my_style.css">
+{% endblock styles %}
+
+
+{% block main-content %}
+
+<section class="section lb p120">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="tagline-message page-title text-center">
+                    <h3> {{ genre.type }} </h3>
+                    <ul class="breadcrumb">
+                        <li><a href="javascript:void(0)">Home</a></li>
+                        <li class="active">Genre</li>
+                    </ul>
+                </div>
+            </div><!-- end col -->
+        </div><!-- end row -->
+    </div><!-- end container -->
+</section><!-- end section -->
+
+<section class="section gb nopadtop" id="data-area">
+    <div class="container">
+        <div class="boxed boxedp4">
+            <div class="shop-top">
+                <div class="clearfix">
+                    <div class="pull-left">
+                        <p> Page [[ currentPage ]] of [[ parseInt(pageCnt/12) ]] </p>
+                    </div>
+                    <div class="pull-right">
+                    <select class="selectpicker" v-model="sortNo" @change="sortList(sortNo)">
+                        <option value="1"> 평점순 </option>
+                        <option value="2"> 최신순 </option>
+                        <option value="3"> 제목 오름차순 </option>
+                        <option value="4"> 제목 내림차순 </option>
+                    </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row blog-grid shop-grid">
+                <div  v-for="movie in movies">
+                    <div class="col-md-3">
+                        <div class="course-box shop-wrapper">
+                            <div class="image-wrap entry">
+                                <img :src="`/static/imgs/${movie.id}.png`" alt="" class="img-responsive" style="height: 300px;">
+                                <div class="magnifier">
+                                    <a :href="`/movies/detail/${movie.id}/`" title=""><i class="flaticon-add"></i></a>
+                                </div>
+                            </div>
+                            <!-- end image-wrap -->
+                            <div class="course-details shop-box text-center">
+                                <h4>
+                                    <a href="'#'" title=""> [[ truncate(movie.title, 10) ]] </a>
+                                    <small> [[ movie.release_date ]] </small>
+                                </h4>
+                            </div>
+                            <!-- end details -->
+                            <div class="course-footer clearfix">
+                                <div class="pull-left">
+                                    <ul class="list-inline">
+                                        <li><a href="#"><i class="fa fa-clock-o"></i> [[ movie.running_time ]]분 </a></li>
+                                    </ul>
+                                </div><!-- end left -->
+                                <div class="pull-right">
+                                    <ul class="list-inline">
+                                        <li><a href="#"> <i class="fa fa-star" style="color: #82b440;"></i>[[ movie.avg_grade ]] </a></li>
+                                    </ul>
+                                </div><!-- end left -->
+                            </div><!-- end footer -->
+                        </div><!-- end box -->
+                    </div><!-- end col -->
+                </div>
+            </div>
+            <hr class="invis">
+
+            <div class="row text-center">
+                <div class="col-md-12">
+                    <ul class="pagination">
+                        <li v-if="showPrevButton"><a @click="loadPrev()" href="#">&laquo;</a></li>
+                        <li v-else class="disabled"><a href="#">&laquo;</a></li>
+            
+                        <li v-for="page in pages" :class="pageClass(page)">
+                            <a @click="pageChanged(page)" href="#">[[ page ]]</a>
+                        </li>
+            
+                        <li v-if="showNextButton"><a @click="loadNext()" href="#">&raquo;</a></li>
+                        <li v-else class="disabled"><a href="#">&raquo;</a></li>
+                    </ul>
+
+                </div><!-- end col -->
+            </div><!-- end row -->
+        </div>
+    </div><!-- end container -->
+</section>
+
+{% endblock main-content %}
+
+{% block scripts %}
+
+<script>
+    const MovieListApp = {
+        delimiters: ['[[', ']]'],
+
+        data() {
+            return {
+                // 페이지네이션 관련------------------------------------------------------------
+                movies : [],
+                genreId: null,
+                currentPage: 1,
+                showNextButton: false,
+                showPrevButton: false,
+                pageCnt : 1,
+
+                sortNo: 1,
+            }
+        },
+        
+        // 페이지네이션 관련------------------------------------------------------------
+        computed: {
+
+            pages() {
+                console.log("pages()...", this.pageCnt);
+                let pages3 = [];
+                if (this.pageCnt === 1) pages3 = [1];
+                else if (this.pageCnt === 2) pages3 = [1, 2];
+                else if (this.pageCnt >= 3) {
+                    if (this.currentPage === 1) pages3 = [1, 2, 3];
+                    else if (this.currentPage === this.pageCnt) pages3 = [this.pageCnt-2, this.pageCnt-1, this.pageCnt];
+                    else pages3 = [this.currentPage-1, this.currentPage, this.currentPage+1];
+                }
+                return pages3
+            },
+        },
+
+        created() {
+            console.log("데이터 가져오는 중........");
+            const genreId = location.pathname.split('/')[3];
+            this.genreId = genreId
+            this.getMovies()
+        },
+
+        methods: {
+            // 페이지네이션 관련------------------------------------------------------------
+            loadNext() {
+                this.currentPage += 1
+                this.getMovies()
+            },
+
+            loadPrev() {
+                this.currentPage -= 1
+                this.getMovies()
+            },
+
+            pageClass(page){
+                if (this.currentPage === page) return 'active';
+                else return ''
+            },
+            
+            pageChanged(page) {
+                this.currentPage = page;
+                this.getMovies();
+            },
+
+            sortList(no) {
+                this.sortNo = no
+                this.getMovies()
+            },
+
+            getMovies() {
+                console.log("유저 무비 기록 가져오는 중~~~")
+                let getUrl = `http://127.0.0.1:8000/api/movies/list?genre=${this.genreId}&sort=${this.sortNo}`
+                console.log(getUrl)
+
+                if ( this.currentPage !== 1){
+                    getUrl = `http://127.0.0.1:8000/api/movies/list?genre=${this.genreId}&page=${this.currentPage}&sort=${this.sortNo}`
+                }
+
+                axios.get(getUrl)
+                    .then(res => {
+
+                        this.showNextButton = false
+                        this.showPrevButton = false
+
+                        if (res.data.next) {
+                            this.showNextButton = true
+                        }
+
+                        if (res.data.previous) {
+                            this.showPrevButton = true
+                        }
+
+                        this.movies = res.data.results
+                        this.pageCnt = res.data.count 
+                    })
+                    .catch(err => {
+                        console.log("GET ERR.RESPONSE", err.response);
+                        alert(`${err.response.status} ${err.response.statusText}`);
+                    });
+            },
+
+            truncate(value, length) {
+                if (value.length > length) {
+                    return value.substring(0, length) + "...";
+                } else {
+                    return value;
+                }
+            },
+        },
+    };
+
+    Vue.createApp(MovieListApp).mount('#data-area')
+
+</script>
+{% endblock scripts %}

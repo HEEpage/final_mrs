@@ -1,0 +1,364 @@
+{% extends 'partials/base.html' %}
+
+{% block styles %}
+<!-- <link rel="stylesheet" href="/static/css/prettyPhoto.css"> -->
+<link rel="stylesheet" href="/static/my_style.css">
+{% endblock styles %}
+
+{% if message %}
+    <script type="text/javascript">
+        const txt = "{{ message }}";
+        alert(txt);
+    </script>
+{% endif %}
+
+{% block main-content %}
+
+<!-- LOADER -->
+<div id="preloader">
+    <img class="preloader" src="/static/images/loader.gif" alt="">
+</div><!-- end loader -->
+<!-- END LOADER -->
+
+<section class="section db p120">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="tagline-message page-title text-center">
+                    <h3>🎉 Sign Up</h3>
+                    <ul class="breadcrumb">
+                        <li><a href="javascript:void(0)">Edulogy</a></li>
+                        <li class="active">Sign Up</li>
+                    </ul>
+                </div>
+            </div><!-- end col -->
+        </div><!-- end row -->
+    </div><!-- end container -->
+</section><!-- end section -->
+
+<section class="section gb nopadtop">
+    <div class="container">
+        <div class="boxed boxedp4">
+
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3">
+                    <div class="section-title text-center form-group">
+                        <h4> ✨ MRS와 함께 다양한 영화를 만나보세요! ✨ </h4>
+                    </div><!-- end title -->
+
+                    {% if errors %}
+                    <div class="alert alert-danger" id="alertError" name="alertError" role="alert">
+                        {% for field in errors %}
+                            {{ field.errors }}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <form class="big-contact-form" name="registerForm" method="POST">
+                        {% csrf_token %}
+
+                        <label for="email"> Email address : </label>
+                        <input type="email" name="{{ form.email.name }}" id="email" class="form-control" placeholder="Enter email" required>
+                        <p><small class="error_next_box" id="emailMsg" name="emailMsg" aria-live="assertive" style="color: crimson;"></small></p>
+
+                        <label for="password1"> Password : </label>
+                        <input type="password" name="{{ form.password1.name }}" id="password1" class="form-control" placeholder="Enter password" autoComplete="off" required>
+                        <p><small class="error_next_box" id="pw1Msg" name="pw1Msg" aria-live="assertive" style="color: crimson;"></small></p>
+
+                        <label for="password2"> Checked Password : </label>
+                        <input type="password" name="{{ form.password2.name }}" id="password2" class="form-control" placeholder="Checked password" autoComplete="off" required>
+                        <p><small class="error_next_box" id="pw2Msg" name="pw2Msg" aria-live="assertive" style="color: crimson;"></small></p>
+
+                        <hr/>
+
+                        <label for="username"> Nickname : </label>
+                        <input type="text" name="{{ form.username.name }}" id="username" class="form-control" placeholder="Enter your name" required>
+                        <p><small class="error_next_box" id="nameMsg" name="nameMsg" aria-live="assertive" style="color: crimson;"></small></p>
+
+                        <p>
+                            <label> Gender : </label> &nbsp;
+                            <input type="radio" name="{{ form.gender.name }}" value="m" checked> male <input type="radio" name="{{ form.gender.name }}" value="f"> female 
+                        </p>
+
+                        <p>
+                            <label> Date of birth : </label>
+                            <input type="date" name="{{ form.birth.name }}" id="birth" class="form-control" required>
+                            <p><small class="error_next_box" id="birthMsg" name="birthMsg" aria-live="assertive" style="color: crimson;"></small></p>
+                        </p>
+
+                        <label> Preference Genre : </label>
+                        <div>
+                            {% for genre in genre_list %}
+                                {% if forloop.counter == 6 or forloop.counter == 11 or forloop.counter == 16 or forloop.counter == 21 %}
+                                <p></p>
+                                {% endif %}
+                                <input type="checkbox" name="pf_genre" value="{{ genre.type }}"> {{ genre.type }} &nbsp;&nbsp;
+                            {% endfor %}
+                        </div>
+                        <p><small class="error_next_box" id="genreMsg" name="genreMsg" aria-live="assertive" style="color: crimson;"></small></p>
+                        <input type="hidden" name="{{ form.preference_genre.name }}" id="preference_genre">
+
+                        <br>
+
+                        <button type="button" class="btn btn-default" onclick="location.href='{% url 'home' %}'">Cancel</button>
+                        <button type="button" class="btn btn-primary" onclick="memberRegister()">Submit</button>
+                    </form>
+                </div><!-- end col -->
+            </div><!-- end row -->
+        </div><!-- end container -->
+    </div>
+</section>
+
+{% endblock main-content %}
+
+{% block scripts %}
+
+<script>
+
+    // 오류 메시지 출력
+    function showErrorMsg(oMsg, msg) {
+        oMsg.html(msg);
+    }
+
+    // 오류 발생한 객체로 포커스 옮김
+    function setFocusToInputObject(oInput) {
+        oInput.focus();
+    }
+
+    function showSuccessMsg(oMsg) {
+        oMsg.html(msg);
+        oMsg.css('color', 'green');
+    }
+
+    // 문제 없으면 오류 메시지 없애기
+    function hideMsg(oMsg) {
+        oMsg.css('display', 'none');
+    }
+
+    // ------------- E-mail ----------------
+    var emailFlag = false;
+
+    $("#email").blur(function(){
+        emailFlag = false;
+        checkEmail("first");
+    });
+
+    function checkEmail(evnet) {
+        if (emailFlag)
+            return true;
+
+        var email = $("#email").val();
+        var oMsg = $("#emailMsg");
+        var oInput = $("#email");
+
+        if (email == "") {
+            showErrorMsg(oMsg, "필수 정보입니다. 반드시 입력해 주세요!");
+            setFocusToInputObject(oInput);
+            return false;
+        }
+
+        // const eValid = (/^[\w+_]\w+@\w+\.\w+/).test(email);
+        const eValid = (/([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/).test(email);
+        
+        if (!eValid) {
+            showErrorMsg(oMsg, "E-mail 형식에 맞지 않습니다. 다시 입력하세요!");
+            setFocusToInputObject(oInput);
+            return false;
+        }
+
+        emailFlag = false;
+        let userEmail = $('input[name=email]').val();
+        console.log("입력한 email : ", userEmail);
+
+        $.ajax({
+            type: 'POST',
+            url: '/accounts/check-email/',
+            data: {email: email},
+            success: function (response) {
+                // if (response.result !== 'success') {
+                //     return
+                // }
+
+                if (response.result === 'exist') {
+                    showErrorMsg(oMsg, "이미 사용 중인 E-mail입니다. 다시 입력하세요.");
+                    setFocusToInputObject(oInput);
+                } else {
+                    hideMsg(oMsg);
+                    emailFlag = true;
+                }
+            },
+
+            error: function () {
+                alert("서버 요청 실패!");
+            }
+        })
+
+        return true;
+    }
+
+
+    // ------------- password ----------------
+    var pw1Flag = false;
+
+    $("#password1").blur(function(){
+        // pw1Flag = false;
+        pw1Flag = checkPW("first");
+    });
+
+    function checkPW(evnet) {
+        if (pw1Flag)
+            return true;
+
+        var pw1 = $("#password1").val();
+        var oMsg = $("#pw1Msg");
+        var oInput = $("#password1");
+
+        if (pw1 == "") {
+            showErrorMsg(oMsg, "필수 정보입니다. 반드시 입력해 주세요!");
+            setFocusToInputObject(oInput);
+            return false;
+        } 
+
+        const eValid = (/^.*(?=.{6,12})(?=.*[0-9])(?=.*[a-zA-Z]).*$/).test(pw1);
+        
+        if (!eValid) {
+            showErrorMsg(oMsg, "비밀번호는 영어와 숫자를 포함한 6~12자리로 작성해주세요!");
+            setFocusToInputObject(oInput);
+            return false;
+        }
+        
+        hideMsg(oMsg);
+        return true;
+
+    }
+
+    // ------------- password check ----------------
+    var pw2Flag = false;
+
+    $("#password2").blur(function(){
+        pw2Flag = false;
+        checkPW2("first");
+    });
+
+    function checkPW2(evnet) {
+        if (pw2Flag)
+            return true;
+
+        var pw1 = $("#password1").val();
+        var pw2 = $("#password2").val();
+        var oMsg = $("#pw2Msg");
+        var oInput1 = $("#password1");
+        var oInput2 = $("#password2");
+
+        if (pw1 !== pw2) {
+            showErrorMsg(oMsg, "비밀번호는 동일하게 작성해주세요.");
+            setFocusToInputObject(oInput2);
+            return false;
+        } else {
+            hideMsg(oMsg);
+            return true;
+        }
+
+    }
+
+
+    // ------------- username ----------------
+    var nameFlag = false;
+
+    $("#username").blur(function(){
+        nameFlag = false;
+        checkName("first");
+    });
+
+    function checkName(evnet) {
+        if (nameFlag)
+            return true;
+
+        var name = $("#username").val();
+        var oMsg = $("#nameMsg");
+        var oInput = $("#username");
+
+        if (name == "") {
+            showErrorMsg(oMsg, "필수 정보입니다. 반드시 입력해주세요!");
+            setFocusToInputObject(oInput);
+            return false;
+        }
+
+        const eValid = (/^[가-힣a-zA-Z0-9]*$/).test(name);
+        
+        if (!eValid) {
+            showErrorMsg(oMsg, "닉네임은 한글,영어,숫자만 가능합니다. 다시 입력해주세요.");
+            setFocusToInputObject(oInput);
+            return false;
+        }
+
+        nameFlag = false;
+        let username = $('input[name=username]').val();
+        console.log("입력한 nickname : ", username);
+
+        $.ajax({
+            type: 'POST',
+            url: '/accounts/check-name/',
+            data: {username: username},
+            success: function (response) {
+
+                if (response.result === 'exist') {
+                    showErrorMsg(oMsg, "이미 사용 중인 닉네임입니다. 다시 입력하세요.");
+                    setFocusToInputObject(oInput);
+                } else {
+                    hideMsg(oMsg);
+                    nameFlag = true;
+                }
+            },
+
+            error: function () {
+                alert("서버 요청 실패!");
+            }
+        })
+
+        return true;
+    }
+
+    function memberRegister() {
+
+        var form = document.registerForm;
+
+        var birthFlag = false;
+        var birth = $("#birth").val();
+
+        console.log("birth test >>>>>> ", birth);
+
+        if (birth == "") {
+            showErrorMsg($("#birthMsg"), "필수 정보입니다. 생년월일을 입력해주세요!");
+            setFocusToInputObject($("#birth"));
+            birthFlag = false;
+            return;
+        } else {
+            hideMsg($("#birthMsg"));
+            birthFlag = true;
+        }
+
+        var genreFlag = false;
+        const g_array = new Array();
+        $('input:checkbox[name=pf_genre]:checked').each(function(){
+            g_array.push(this.value);
+        });
+
+        var pref_genre = $("#preference_genre").val(g_array);
+
+        if (g_array.length < 1 || g_array.length > 3 || pref_genre == "") {
+            showErrorMsg($("#genreMsg"), "선호 장르는 반드시 1~3개를 선택해야 합니다.");
+            genreFlag = false;
+            return;
+        } else {
+            hideMsg($("#genreMsg"));
+            genreFlag = true;
+        }
+
+        form.action = "/accounts/register/";
+        form.submit();
+
+    }
+
+</script>
+{% endblock scripts %}

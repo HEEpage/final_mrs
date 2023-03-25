@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Log Add</title>
+</head>
+<body>
+
+    <h1> Movie Log - Add  </h1>
+
+    <div>
+        <!-- 영화 검색 -->
+        <form action="{% url 'users:user_mvlog_search' %}" method="post">
+            {% csrf_token %}
+
+            <label> 영화 제목 </label>
+            <input type="search" name="keyword">
+            <button type="submit"> 검색 </button>
+
+        </form>
+
+        <!-- 검색한 영화 목록 -->
+        {% if movie_list %}
+            {% for m in movie_list %}
+                <div>
+                    <form action="{% url 'users:user_mvlog_add' %}" method="post">
+                        {% csrf_token %}
+
+                        {{ m.title }} {{ m.release_date }}
+                        <input type="hidden" name="id" value="{{ m.id }}">
+                        <button type="submit"> 선택 </button>
+
+                    </form>
+                </div>
+            {% endfor %}
+        {% endif %}
+    
+    </div>
+
+    <hr/>
+
+    <!-- 평점 & 리뷰 작성 -->
+    {% if movie %}
+        <form action="{% url 'users:user_mvlog_write' %}" method="post">
+            {% csrf_token %}
+
+            <p>
+                <strong> {{ movie.title }} </strong>
+                <input type="hidden" name="id" value="{{ movie.id }}"> 
+            </p>
+
+            <p>
+                <label> 평점 </label>
+                <input type="text" name="grade">
+            </p>
+
+            <p>
+                <label> 리뷰 
+                    <sup>(<span id="nowByte">0</span>/300bytes)</sup>
+                </label>
+                <textarea rows="10" cols="50" class="form-control" id="review" 
+                        name="review" onkeyup="fn_checkByte(this)"></textarea>
+            </p>
+            
+            <button type="submit"> 등록 </button>
+
+        </form>
+    {% endif %}
+
+</body>
+</html>
+
+<script>
+
+    function fn_checkByte(obj){
+        const maxByte = 300; //최대 100바이트
+        const text_val = obj.value; //입력한 문자
+        const text_len = text_val.length; //입력한 문자수
+        
+        let totalByte=0;
+        for(let i=0; i<text_len; i++){
+            const each_char = text_val.charAt(i);
+            const uni_char = escape(each_char); //유니코드 형식으로 변환
+            if(uni_char.length>4){
+                // 한글 : 2Byte
+                totalByte += 2;
+            }else{
+                // 영문,숫자,특수문자 : 1Byte
+                totalByte += 1;
+            }
+        }
+        
+        if(totalByte > maxByte){
+            alert("최대 300Byte까지만 입력가능합니다.");
+                document.getElementById("nowByte").innerText = totalByte;
+                document.getElementById("nowByte").style.color = "red";
+        }else{
+                document.getElementById("nowByte").innerText = totalByte;
+                document.getElementById("nowByte").style.color = "green";
+        }
+    }
+
+</script>

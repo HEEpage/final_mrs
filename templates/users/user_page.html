@@ -1,0 +1,272 @@
+{% extends 'partials/base.html' %}
+
+{% block styles %}
+<link rel="stylesheet" href="/static/my_style.css">
+<link rel="stylesheet" href="/static/css/jqcloud.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css">
+
+<style>
+    .legend-div {
+        /* position: absolute; */
+        top: 62px;
+        left: 320px;
+    }
+
+    .legend-div ul li {
+        list-style: none;
+        margin: 10px 0;
+        color: #666;
+        font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif
+    }
+
+    .legend-div ul li span {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        margin-right: 5px;
+        vertical-align: middle;
+    }
+</style>
+
+{% endblock styles %}
+
+{% block main-content %}
+<!-- LOADER -->
+<div id="preloader">
+    <img class="preloader" src="/static/images/loader.gif" alt="">
+</div><!-- end loader -->
+<!-- END LOADER -->
+
+<div id="wrapper">
+
+    <section class="section db">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="tagline-message page-title text-center">
+                        <h3>마이페이지</h3>
+                    </div>
+                </div><!-- end col -->
+            </div><!-- end row -->
+        </div><!-- end container -->
+    </section><!-- end section -->
+
+    <section class="section gb nopadtop">
+        <div class="container">
+            <div class="boxed">
+                <div class="row">
+                    <div class="content blog-list">
+                        <div class="content boxed-comment clearfix">
+                            <div class="comments-list">
+                                <div class="media">
+                                    <a class="media-left" href="#">
+                                        <img src="/static/images/profile.png" alt="user_profile" class="img-profile">
+                                    </a>
+                                    <div class="media-body">
+                                        <h2>{{ username }}</h2>
+                                        <div class="text-right">
+                                            <a href="{% url 'users:user_wish' %}" class="btn btn-primary mypage">위시리스트</a>
+                                            &nbsp;&nbsp;
+                                            <a href="{% url 'users:user_mvlog' %}" class="btn btn-primary mypage">영화 기록</a>
+                                            &nbsp;&nbsp;
+                                            <a href="{% url 'users:update' %}" class="btn btn-primary mypage">정보 수정</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div><!-- end content -->
+                    </div>
+                </div><!-- end row -->
+                <div class="row text-center">
+
+                    {% if stats %}
+
+                        <div style="width: 60%; margin: auto;">
+                            <h3 class="text-left"> 별점 분포</h3>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <p> <h4> <strong> {{ stats.grades.mean_val | floatformat:2 }} </strong> </h4> </p>
+                                    <p> 별점 평균 </p>
+                                </div>
+                                <div class="col-sm-4">
+                                    <p> <h4> <strong> {{ stats.grades.len_val }} </strong> </h4> </p>
+                                    <p> 별점 개수 </p>
+                                </div>
+                                <div class="col-sm-4">
+                                    <p> <h4> <strong> {{ stats.grades.mode_val }} </strong> </h4> </p>
+                                    <p> 많이 준 별점 </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr/>
+                        <br>
+
+                        <div style="width: 60%; margin: auto;">
+                            <h3 class="text-left"> 선호 키워드 </h3>
+                            <div style="width:80%; min-height:300px; margin: auto;" id="tags-cloud"></div>
+                        </div>
+
+                        <hr/>
+                        <br>
+
+                        <div style="width: 60%; margin: auto;">
+                            <h3 class="text-left"> 선호 배우 </h3>
+                            <table style="width: 70%;">
+                            {% for c_name, c_total, c_count in stats.casts %}
+                                <tr>
+                                    <td>
+                                        <h4> {{ c_name }} </h4>
+                                    </td>
+                                    <td>
+                                        <strong> {{ c_total }}점 </strong> 
+                                    </td>
+                                    <td>
+                                        {{ c_count }}편
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </table>
+                        </div>
+                        
+                        <hr/>
+                        <br>
+
+                        <div style="width: 60%; margin: auto;">
+                            <h3 class="text-left"> 선호 감독 </h3>
+                            <table style="width: 70%;">
+                            {% for d_name, d_total, d_count in stats.directors %}
+                                <tr>
+                                    <td>
+                                        <h4> {{ d_name }} </h4>
+                                    </td>
+                                    <td>
+                                        <strong> {{ d_total }}점 </strong> 
+                                    </td>
+                                    <td>
+                                        {{ d_count }}편
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </table>
+                        </div>
+
+                        <hr/>
+                        <br>
+
+                        <div style="width: 60%; margin: auto;">
+                            <h3 class="text-left"> 선호 장르 </h3>
+                            <div class="chart-div">
+                                <div class="row">
+                                    <div class="col-sm-8" style="margin: auto;">
+                                        <canvas id="pieChartCanvas" width="300px" height="300px" style="margin-left: 130px;"></canvas>
+                                    </div>
+                                    <div class="col-sm-4 text-left">
+                                        <div id='legend-div' class="legend-div" style="margin-top: 40px;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr/>
+                        <br>
+
+                        <div style="width: 60%; margin: auto;">
+                            <h3 class="text-left"> 감상 시간 </h3>
+                            <h4>🎬 <strong> {{ stats.times.hour }}시간 {{ stats.times.minute }}분 </strong></h4>
+                        </div>
+
+                    {% endif %}
+                </div>
+            </div><!-- end boxed -->
+        </div><!-- end container -->
+    </section>
+
+</div><!-- end wrapper -->
+
+
+{% endblock main-content %}
+
+{% block scripts %}
+
+<script src="/static/js/jqcloud.js"></script>
+
+
+<script type="text/javascript">
+
+    // --------------- word cloud ---------------
+    
+    var keyword = JSON.parse('{{ stats.keywords|escapejs }}');
+    var words = [];
+    
+    for (const key in keyword) {
+        words.push({ text: key, weight: keyword[key] });
+    }
+
+    $('#tags-cloud').jQCloud(words, {
+        classPattern: null,
+        colors: ["#800026", "#bd0026", "#e31a1c", "#fc4e2a", "#fd8d3c", "#feb24c", "#fed976", "#ffeda0", "#ffffcc"],
+        fontSize: {
+            from: 0.07,
+            to: 0.015
+        }
+    });
+    
+    
+    // --------------- pie chart ---------------
+
+    var pref_genre = JSON.parse('{{ stats.genres|escapejs }}');
+
+    var label_list = []
+    var data_list = []
+
+    for (const genre in pref_genre) {
+        label_list.push(pref_genre[genre][0])
+        data_list.push(pref_genre[genre][1][0])
+    }
+
+    window.onload = function () {
+        pieChartDraw();
+        document.getElementById('legend-div').innerHTML = window.pieChart.generateLegend();
+    }
+
+    let pieChartData = {
+        labels: label_list,
+        datasets: [{
+            data: data_list,
+            backgroundColor: ['rgb(255, 99, 132)', 'rgb(255, 159, 64)', 'rgb(255, 205, 86)', 'rgb(75, 192, 192)', 'rgb(54, 162, 235)', 'rgb(153, 102, 255)']
+        }] 
+    };
+
+    let pieChartDraw = function () {
+        let ctx = document.getElementById('pieChartCanvas').getContext('2d');
+        
+        window.pieChart = new Chart(ctx, {
+            type: 'pie',
+            data: pieChartData,
+            options: {
+                responsive: false,
+                legend: {
+                    display: false
+                },
+                legendCallback: customLegend
+            }
+        });
+    };
+
+    let customLegend = function (chart) {
+        let ul = document.createElement('ul');
+        let color = chart.data.datasets[0].backgroundColor;
+
+        chart.data.labels.forEach(function (label, index) {
+            ul.innerHTML += `<li><span style="background-color: ${color[index]}"></span>${label}</li>`;
+        });
+
+        return ul.outerHTML;
+    };
+
+</script>
+
+{% endblock scripts %}

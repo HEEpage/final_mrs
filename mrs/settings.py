@@ -42,6 +42,10 @@ INSTALLED_APPS = [
     # app
     'movies',
     'users',
+
+    # Team add
+    'django_extensions',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -118,11 +122,38 @@ USE_TZ = False
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
+# DEBUG = True (개발자 모드)
 STATIC_URL = 'static/'
 
 STATICFILES_DIRS = (BASE_DIR / 'static',)
+
+# DEBUG = False(배포 모드)일 때 아래와 같이 폴더명을 동일하게 설정한다.
+# STATIC_URL = 'static_/'
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static_') # ROOT 폴더명이 STATIC_URL과 동일한 폴더명이 되어야 한다.
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# -------------- TEAM ADD ------------------
+
+# Custom User Model 사용
+AUTH_USER_MODEL = 'users.User'
+
+# 회원가입 또는 비밀번호 찾기를 할 때 이메일 인증 받기
+# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+# 로그인 성공후 이동하는 URL
+LOGIN_REDIRECT_URL = '/'
+
+# 로그아웃 후 이동하는 URL
+LOGOUT_REDIRECT_URL = '/'
+
+# PAGINATION
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS' : 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE' : 5,
+}

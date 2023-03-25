@@ -1,0 +1,52 @@
+{% extends 'partials/base.html' %}
+
+{% block main-content %}
+
+{% block navbar %}
+{% endblock navbar %}
+
+<section id="home" class="video-section js-height-full">
+    <div class="overlay"></div>
+    <div class="home-text-wrapper relative container">
+        <div class="home-message login">
+            <p>LOGIN</p>
+
+            <div class="text-center">
+                <div class="container my-3">
+                    <form action="{% url 'users:login' %}" method="post" class="card pt-3">
+                        {% csrf_token %}
+                            <table>
+                                <tr class="text-left">
+                                    <td><label for="id_username">EMAIL : &nbsp;&nbsp;</label></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input type="text" name="username" autofocus="" autocapitalize="none"
+                                        autocomplete="username" maxlength="254" required="" id="id_username">
+                                    </td>
+                                </tr>
+                                <tr class="text-left">
+                                    <td><br><label for="id_password">PASSWORD : &nbsp;&nbsp;</label></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input type="password" name="password" autocomplete="current-password" required=""
+                                        id="id_password">
+                                    </td>
+                                </tr>
+                            </table>
+                        <br>
+                        <div class="text-center">
+                            <div class="">
+                                <input type="submit" value="Sign In" class="btn btn-primary">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div><!-- end row -->
+        </div>
+    </div>
+
+</section>
+
+{% endblock main-content %}
